@@ -193,9 +193,11 @@ class AliexpressPackageSensor(SensorEntity):
     @property
     def extra_state_attributes(self) -> dict[str, str]:
         if self._data is not None:
-            self._attributes['estimated_max_delivery_date'] = datetime.fromtimestamp(self._data['globalEtaInfo']['deliveryMaxTime']/1000)
+            if 'globalEtaInfo' in self._data:
+                self._attributes['estimated_max_delivery_date'] = (self._data['globalEtaInfo']['deliveryMaxTime']/1000)
             self._attributes['last_update_time'] = datetime.fromtimestamp(self._data["latestTrace"]["time"]/1000)
             self._attributes['last_update_status'] = self._data["latestTrace"]["standerdDesc"]
+            self._attributes['order_number'] = self._order_number
             #self._attributes['more_info'] = self._data["detailList"]
             
         return self._attributes
@@ -222,9 +224,11 @@ class AliexpressPackageSensor(SensorEntity):
             _LOGGER.error("Errors when querying Canino - %s", err)
             return
 
-        self._attributes['estimated_max_delivery_date'] = datetime.fromtimestamp(value['globalEtaInfo']['deliveryMaxTime']/10000)
+        if 'globalEtaInfo' in self._data:
+                self._attributes['estimated_max_delivery_date'] = (self._data['globalEtaInfo']['deliveryMaxTime']/1000)
         self._attributes['last_update_time'] = datetime.fromtimestamp(value["latestTrace"]["time"]/1000)
         self._attributes['last_update_status'] = value["latestTrace"]["standerdDesc"]
+        self._attributes['order_number'] = self._order_number
         #self._attributes['more_info'] = self._data["detailList"]
 
         self._state = value["statusDesc"]
