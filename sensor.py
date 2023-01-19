@@ -175,14 +175,12 @@ class AliexpressPackageSensor(SensorEntity):
         self._attr_name = f'Aliexpress_package_no_{order_number}'
         self._hass = hass
 
-    @property
-    def friendly_name(self) -> str | None:
-        return read_packages_json()[self._order_number]["title"]
+    #@property
+    #def friendly_name(self) -> str | None:
+    #    return read_packages_json()[self._order_number]["title"]
     @property
     def unique_id(self) -> str | None:
-        
         return self._order_number
-
 
     @property
     def state(self):
@@ -194,10 +192,11 @@ class AliexpressPackageSensor(SensorEntity):
     def extra_state_attributes(self) -> dict[str, str]:
         if self._data is not None:
             if 'globalEtaInfo' in self._data:
-                self._attributes['estimated_max_delivery_date'] = (self._data['globalEtaInfo']['deliveryMaxTime']/1000)
-            self._attributes['last_update_time'] = datetime.fromtimestamp(self._data["latestTrace"]["time"]/1000)
+                self._attributes['estimated_max_delivery_date'] = int(self._data['globalEtaInfo']['deliveryMaxTime']/1000)
+            self._attributes['last_update_time'] = datetime.fromtimestamp(int(self._data["latestTrace"]["time"]/1000))
             self._attributes['last_update_status'] = self._data["latestTrace"]["standerdDesc"]
             self._attributes['order_number'] = self._order_number
+            self._attributes['title'] = read_packages_json()[self._order_number]["title"]
             #self._attributes['more_info'] = self._data["detailList"]
             
         return self._attributes
@@ -225,10 +224,12 @@ class AliexpressPackageSensor(SensorEntity):
             return
 
         if 'globalEtaInfo' in self._data:
-                self._attributes['estimated_max_delivery_date'] = (self._data['globalEtaInfo']['deliveryMaxTime']/1000)
-        self._attributes['last_update_time'] = datetime.fromtimestamp(value["latestTrace"]["time"]/1000)
+                self._attributes['estimated_max_delivery_date'] = int(self._data['globalEtaInfo']['deliveryMaxTime']/1000)
+        self._attributes['last_update_time'] = datetime.fromtimestamp(int(value["latestTrace"]["time"]/1000))
         self._attributes['last_update_status'] = value["latestTrace"]["standerdDesc"]
         self._attributes['order_number'] = self._order_number
+        self._attributes['title'] = read_packages_json()[self._order_number]["title"]
+
         #self._attributes['more_info'] = self._data["detailList"]
 
         self._state = value["statusDesc"]
