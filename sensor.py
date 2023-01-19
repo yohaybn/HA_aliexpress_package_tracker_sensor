@@ -1,4 +1,4 @@
-"""Support for non-delivered packages recorded in aliexpress_package_tracker."""
+"""Support for  aliexpress_package_tracker."""
 from __future__ import annotations
 
 import logging
@@ -83,9 +83,9 @@ async def track_packages(hass: HomeAssistant,order_numbers,lang='en-US'):
         session = async_get_clientsession(hass)
         try:
             response = await session.get(f'https://global.cainiao.com/global/detail.json?mailNos={order_numbers}&lang={lang}')
-            _LOGGER.error("track_packages: %s",response)
             response.raise_for_status()
             data = await response.json()
+            _LOGGER.debug("track_packages: %s",data)
             if data is not None:
                 return data
             else:
@@ -100,28 +100,25 @@ async def async_setup_platform(
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
     """Set up the aliexpress_package_tracker sensor platform."""
-    # name = config[CONF_NAME]
-    # session = async_get_clientsession(hass)
+
     lang = config[CONF_LANG]
     async def get_data(order_numbers):
-        _LOGGER.error("get_data start")
+        _LOGGER.debug("get_data start")
         try:
             data = await track_packages(hass,order_numbers,lang)
-            _LOGGER.error("get_data data: %s", data)
+            _LOGGER.debug("get_data data: %s", data)
         except Exception as err:
             _LOGGER.error("No tracking data found. : %s", err)
             return
         sensors=[]
         for i in data['module']:
-            _LOGGER.error("module . : %s", i)
             sensors.append(AliexpressPackageSensor(i , i['mailNo'],hass))
-        _LOGGER.error("get_data sensors: %s", sensors) 
         async_add_entities(sensors, True)
 
 
     async def handle_add_tracking(call: ServiceCall) -> None:
         """Call when a user adds a new Aftership tracking from Home Assistant."""
-        _LOGGER.error("handle_add_tracking")
+        _LOGGER.debug("handle_add_tracking")
         await add_to_packages_json(
             tracking_number=call.data[CONF_TRACKING_NUMBER],
             title=call.data.get(CONF_TITLE) or "Package" ,
@@ -169,7 +166,7 @@ class AliexpressPackageSensor(SensorEntity):
 
     def __init__(self, data, order_number: str,hass) -> None:
         """Initialize the sensor."""
-        _LOGGER.error("AliexpressPackageSensor __init__ start")
+        _LOGGER.debug("AliexpressPackageSensor __init__ start")
 
         self._data=data
         self._attributes: dict[str, Any] = {}
@@ -177,24 +174,19 @@ class AliexpressPackageSensor(SensorEntity):
         self._order_number=order_number
         self._attr_name = f'Aliexpress_package_no_{order_number}'
         self._hass = hass
-        #self.unique_id = order_number
+
     @property
     def friendly_name(self) -> str | None:
-        return read_packages_json()[self._order_number]["title"]#self._order_number
+        return read_packages_json()[self._order_number]["title"]
     @property
     def unique_id(self) -> str | None:
         
         return self._order_number
-   # @property
-   # def native_value(self) -> int | None:
-   #     """Return the state of the sensor."""
-   #     return self._state
+
 
     @property
     def state(self):
         """Return the state of the device."""
-       # _LOGGER.error("state -info: %s",self._coordinator.data)
-       # _LOGGER.error("state -_key: %s",self._key)
         if self._state is None:
             return "Unavilable"
         return self._state 
@@ -225,12 +217,11 @@ class AliexpressPackageSensor(SensorEntity):
         try:
             value = await track_packages(self._hass,self._order_number)
             value= value['module'][0]
-            _LOGGER.error("value - %s", value)
+            _LOGGER.debug("value - %s", value)
         except Exception as err:
             _LOGGER.error("Errors when querying Canino - %s", err)
             return
 
-        #self._attributes = {"track":trackings}
         self._attributes['estimated_max_delivery_date'] = datetime.fromtimestamp(value['globalEtaInfo']['deliveryMaxTime']/10000)
         self._attributes['last_update_time'] = datetime.fromtimestamp(value["latestTrace"]["time"]/1000)
         self._attributes['last_update_status'] = value["latestTrace"]["standerdDesc"]
