@@ -1,7 +1,7 @@
 {
     "domain": "aliexpress_package_tracker",
     "name": "aliexpress_package_tracker",
-    "documentation": "https://github.com/danieldotnl/hass-multiscrape",
+    "documentation": "https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor",
     "requirements": ["requests"],
     "codeowners": ["@yohaybn"],
     "version": "0.0.1"
