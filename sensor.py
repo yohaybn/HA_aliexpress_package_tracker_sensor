@@ -111,10 +111,10 @@ async def async_setup_platform(
             _LOGGER.error("No tracking data found. : %s", err)
             return
         sensors=[]
-        for i in data['module']:
-            sensors.append(AliexpressPackageSensor(i , i['mailNo'],hass))
-        async_add_entities(sensors, True)
-
+        if  'module' in data:
+            for i in data['module']:
+                sensors.append(AliexpressPackageSensor(i , i['mailNo'],hass))
+            async_add_entities(sensors, True)
 
     async def handle_add_tracking(call: ServiceCall) -> None:
         """Call when a user adds a new Aftership tracking from Home Assistant."""
@@ -170,7 +170,7 @@ class AliexpressPackageSensor(SensorEntity):
 
         self._data=data
         self._attributes: dict[str, Any] = {}
-        self._state: data['statusDesc'] | None = None,
+        self._state: data["latestTrace"]["standerdDesc"] | None = None,
         self._order_number=order_number
         self._attr_name = f'Aliexpress_package_no_{order_number}'
         self._hass = hass
@@ -197,6 +197,7 @@ class AliexpressPackageSensor(SensorEntity):
             self._attributes['last_update_status'] = self._data["latestTrace"]["standerdDesc"]
             self._attributes['order_number'] = self._order_number
             self._attributes['title'] = read_packages_json()[self._order_number]["title"]
+            self._attributes['status'] =  self._data['statusDesc']
             #self._attributes['more_info'] = self._data["detailList"]
             
         return self._attributes
@@ -229,7 +230,6 @@ class AliexpressPackageSensor(SensorEntity):
         self._attributes['last_update_status'] = value["latestTrace"]["standerdDesc"]
         self._attributes['order_number'] = self._order_number
         self._attributes['title'] = read_packages_json()[self._order_number]["title"]
-
+        self._attributes['status'] =  self._data['statusDesc']
         #self._attributes['more_info'] = self._data["detailList"]
-
         self._state = value["statusDesc"]
