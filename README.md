@@ -37,7 +37,7 @@ content: >-
 
  ```
 
-# How to set Automation based on email
+# How to set Automation to add package based on email
 setup [IMAP integration](https://www.home-assistant.io/integrations/imap/) 
 and create sensor for email content called "post_track". 
 ```
