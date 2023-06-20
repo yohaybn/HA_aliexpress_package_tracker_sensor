@@ -86,3 +86,39 @@ create sensor for tracking number
       tracking_number: "{{states(src)}}"
   mode: single   
 ```
+
+
+# How to set Automation to notify when status updated
+
+create sensor for latest cahnged. 
+```
+#configuration.yaml
+template:
+  - sensor:
+    - name: Latest_Package_Status_Change
+      state: > 
+          {% set x = states.sensor | selectattr('name', 'search', 'Aliexpress_package_no_*') |sort(attribute='last_changed', reverse=true)  |list  %}
+          {{  (x[0].entity_id if now() - x[0].last_changed < timedelta(seconds=3) else '') if x | count > 0 else '' }}
+```
+
+add automation to notify when status changed
+```
+#automation.yaml
+- alias: aliexpress changed
+  description: ''
+  variables:
+    sensor: "{{states('sensor.latest_package_status_change') }}"
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.latest_package_status_change
+    not_to: ""
+  action:
+  - service: notify.mobile_app 
+    data:
+      title: "עדכון משלוח"
+      message: |
+        {{state_attr(sensor, 'title')}} ({{state_attr(sensor, 'order_number')}}) changed to  {{state_attr(sensor, 'status')}}
+  mode: single
+```
+
