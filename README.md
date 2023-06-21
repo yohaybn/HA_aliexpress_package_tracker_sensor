@@ -77,7 +77,7 @@ create sensor for tracking number
     entity_id:
     - sensor.new_tracking_namber_body
     id: "body"
-  condition: []
+  condition: "{{ trigger.to_state.state not in ['unknown', 'unavailable'] }}"
   variables:
     src: sensor.new_tracking_namber_{{trigger.id}}
   action: 
