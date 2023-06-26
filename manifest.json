@@ -4,7 +4,7 @@
     "documentation": "https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor",
     "requirements": ["requests"],
     "codeowners": ["@yohaybn"],
-    "version": "0.0.2"
+    "version": "0.0.3"
 
   }
   
