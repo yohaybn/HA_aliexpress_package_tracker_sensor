@@ -56,7 +56,7 @@ PLATFORM_SCHEMA: Final = BASE_PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_LANG, default="en-US"): cv.string,
     }
 )
-_JSON_FILE = os.path.join(os.path.dirname(__file__), "packages.json")
+_JSON_FILE = os.path.join(os.path.dirname(__file__), "userfiles/packages.json")
 
 
 def read_packages_json():
