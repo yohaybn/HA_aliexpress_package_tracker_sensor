@@ -202,8 +202,10 @@ def set_attr(self, data, attrs) -> None:
             int(data["latestTrace"]["time"] / 1000)
         )
         attrs["last_update_status"] = data["latestTrace"]["standerdDesc"]
+    if "status" in data:
+        attrs["status"] = data["status"]
     if "statusDesc" in data:
-        attrs["status"] = data["statusDesc"]
+        attrs["statusDesc"] = data["statusDesc"]
     if "realMailNo" in data:
         attrs["realMailNo"] = extract_realMailNo(data["realMailNo"])
     if "daysNumber" in data:
@@ -243,8 +245,8 @@ class AliexpressPackageSensor(SensorEntity):
     @property
     def state(self):
         """Return the state of the device."""
-        if "statusDesc" in self._attributes:
-            self._state = self._attributes["statusDesc"]
+        if "status" in self._attributes:
+            self._state = self._attributes["status"]
         if self._state is None:
             return "Unavilable"
         return self._state
@@ -280,5 +282,5 @@ class AliexpressPackageSensor(SensorEntity):
             return
 
         set_attr(self, value, self._attributes)
-        if "statusDesc" in value:
-            self._state = value["statusDesc"]
+        if "standerdDesc" in value:
+            self._state = value["standerdDesc"]
