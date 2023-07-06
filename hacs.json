@@ -2,5 +2,5 @@
   "name": "Aliexpress package tracker",
   "content_in_root": true,
   "render_readme": true,
-  "persistent_directory": "userfiles",
+  "persistent_directory": "userfiles"
 }
