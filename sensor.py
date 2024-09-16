@@ -72,6 +72,22 @@ def write_packages_json(data):
     with open(_JSON_FILE, "w") as outfile:
         outfile.write(json_object)
 
+def fix_duplicate_real_numbers():
+    data= read_packages_json()
+    new_data = {}
+
+    # Iterate through the original data
+    for key, value in data.items():
+        real_number = value.get("real_number", key)
+
+        # If real_number is not in new_data, create a new entry
+        if real_number not in new_data:
+            new_data[real_number] = {"title": value["title"], "tracking_number": value["tracking_number"]}
+        else:
+            # If real_number is already in new_data, append title
+            new_data[real_number]["title"] += f',{value["title"]}'
+    write_packages_json(new_data)
+
 
 async def add_to_packages_json(tracking_number, title):
     _LOGGER.debug("add_to_packages_json")
@@ -81,12 +97,17 @@ async def add_to_packages_json(tracking_number, title):
         "tracking_number": tracking_number,
     }
     write_packages_json(data)
-
+async def add_real_number_to_packages_json(tracking_number, real_number):
+    _LOGGER.debug("add_to_packages_json")
+    data = read_packages_json()
+    data[tracking_number]["real_number"]=real_number
+    write_packages_json(data)
 
 async def remove_from_packages_json(tracking_number):
     _LOGGER.debug("remove_from_packages_json")
     data = read_packages_json()
-    del data[tracking_number]
+    if tracking_number in data:
+        del data[tracking_number]
     write_packages_json(data)
 
 
@@ -139,7 +160,16 @@ async def async_setup_platform(
 
     async def add_tracking(tracking_number: str, title="Package") -> None:
         _LOGGER.debug("add_tracking")
-        await add_to_packages_json(tracking_number, title)
+        data = read_packages_json()
+        if tracking_number in data:
+            if title != "Package":
+                if data[tracking_number]["title"] != "Package":
+                    data[tracking_number]["title"] = f'{data[tracking_number]["title"]}, {title}' 
+                else:
+                    data[tracking_number]["title"] = f'{title}' 
+                write_packages_json(data)
+        else:
+            await add_to_packages_json(tracking_number, title)
         await get_data(tracking_number)
         async_dispatcher_send(hass, UPDATE_TOPIC)
 
@@ -158,16 +188,23 @@ async def async_setup_platform(
             tracking_number=call.data[CONF_TRACKING_NUMBER],
             title=call.data.get(CONF_TITLE) or "Package",
         )
+        fix_duplicate_real_numbers()
 
     async def handle_remove_tracking(call: ServiceCall) -> None:
         _LOGGER.debug("handle_remove_tracking")
         """Call when a user removes an Aftership tracking from Home Assistant."""
         await remove_tracking(call.data[CONF_TRACKING_NUMBER])
 
+    fix_duplicate_real_numbers()
+    await remove_from_packages_json("unavailable")
     order_numbers = ",".join(read_packages_json().keys())
     _LOGGER.debug("order_numbers %s", order_numbers)
-    await get_data(order_numbers)
-
+    try:
+        await get_data(order_numbers)
+    except Exception as error:
+        _LOGGER.error(
+            "Error while retrieving package data for  track_packages: %s", error
+        )
     hass.services.async_register(
         DOMAIN,
         SERVICE_REMOVE_TRACKING,
@@ -219,7 +256,9 @@ def set_attr(self, data, attrs) -> None:
             )
 
     attrs["order_number"] = self._order_number
-    attrs["title"] = read_packages_json()[self._order_number]["title"]
+    packages_json= read_packages_json()
+    if self._order_number in packages_json:
+        attrs["title"] = read_packages_json()[self._order_number]["title"]
 
 
 class AliexpressPackageSensor(SensorEntity):
@@ -282,5 +321,7 @@ class AliexpressPackageSensor(SensorEntity):
             return
 
         set_attr(self, value, self._attributes)
-        if "standerdDesc" in value:
-            self._state = value["standerdDesc"]
+        if "realMailNo" in self._attributes:
+            await add_real_number_to_packages_json(self._order_number, self._attributes["realMailNo"])
+        if "statusDesc" in value:
+            self._state = value["statusDesc"]
