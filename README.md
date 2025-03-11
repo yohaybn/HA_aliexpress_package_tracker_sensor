@@ -177,7 +177,11 @@ This automation sends a notification to your mobile app when any AliExpress pack
     - service: notify.mobile_app_my_phone
       data:
         title: "AliExpress Package Update"
-        message: "A package's tracking information has been updated. Check the details in Home Assistant."
+        message: >-
+          Package {{ trigger.event.data.entity_id }} has been updated.
+          Old State: {{ trigger.event.data.old_state | default('Unknown') }}.
+          New State: {{ trigger.event.data.new_state | default('Unknown') }}.
+
   mode: single
 ```
 
