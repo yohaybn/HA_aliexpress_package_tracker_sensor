@@ -96,7 +96,7 @@ entity.attributes.order_number }}{% if "realMailNo" in entity.attributes-%}
 
 ```
 
-## Automation Example (Add Package Based on Email)
+## Automation Example- Add Package Based on Email
 
 ### Setup IMAP Integration
 
@@ -161,6 +161,24 @@ sensor:
         tracking_number: "{{states(src)}}"
   mode: single
 
+```
+## Automation Example- Notify on AliExpress Package Update
+
+This automation sends a notification to your mobile app when any AliExpress package tracking information is updated.
+
+
+
+```YAML
+- alias: Notify on AliExpress Package Update
+  triggers:
+    - trigger: event
+      event_type: aliexpress_package_data_updated
+  actions:
+    - service: notify.mobile_app_my_phone
+      data:
+        title: "AliExpress Package Update"
+        message: "A package's tracking information has been updated. Check the details in Home Assistant."
+  mode: single
 ```
 
 ## Important Notes
