@@ -13,14 +13,14 @@ def update_manifest():
             version = sys.argv[index + 1]
 
     with Path.open(
-        f"{Path.cwd()}/custom_components/epg/manifest.json",
+        f"{Path.cwd()}/custom_components/HA_aliexpress_package_tracker_sensor/manifest.json",
     ) as manifestfile:
         manifest = json.load(manifestfile)
 
     manifest["version"] = version
 
     with Path.open(
-        f"{Path.cwd()}/custom_components/epg/manifest.json",
+        f"{Path.cwd()}/custom_components/HA_aliexpress_package_tracker_sensor/manifest.json",
         "w",
     ) as manifestfile:
         manifestfile.write(json.dumps(manifest, indent=4, sort_keys=True))
