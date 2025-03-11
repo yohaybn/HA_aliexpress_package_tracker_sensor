@@ -1,1 +1,0 @@
-"""The aliexpress_package_tracker component."""

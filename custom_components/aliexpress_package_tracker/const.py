@@ -9,14 +9,18 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 
 DOMAIN: Final = "aliexpress_package_tracker"
+INTEGRATION_NAME: Final = "Aliexpress Package Tracker"
 
 ATTRIBUTION: Final = "Information provided by Cainiao API"
 ATTR_TRACKINGS: Final = "trackings"
 
-
+STORAGE_KEY = f"{DOMAIN}_data"
+STORAGE_VERSION = 1
 
 CONF_LANG: Final = "lang"
 CONF_TITLE: Final = "title"
+CONF_PACKAGE: Final = "Package"
+
 CONF_TRACKING_NUMBER: Final = "tracking_number"
 
 DEFAULT_NAME: Final = "aliexpress_package_tracker"

@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "הגדר מעקב עלי אקספרס",
+        "description": "בחר את השפה עבור ההתקנה.",
+        "data": {
+          "language": "שפה"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "ההתקנה כבר מוגדרת."
+    },
+    "abort": {
+      "already_configured": "ההתקנה של מעקב עלי אקספרס כבר מוגדרת."
+    },
+    "create_entry": {
+      "default": "מעקב עלי אקספרס הוגדר בהצלחה."
+    }
+  },
+  "services": {
+    "add_tracking": {
+      "name": "הוסף מעקב",
+      "description": "הוסף מספר מעקב חדש למעקב עלי אקספרס.",
+      "fields": {
+        "tracking_number": {
+          "name": "מספר מעקב",
+          "description": "מספר המעקב עבור החבילה החדשה.",
+          "example": "123456789"
+        },
+        "title": {
+          "name": "כותרת",
+          "description": "כותרת מותאמת אישית למעקב החדש.",
+          "example": "מחשב נייד"
+        }
+      }
+    },
+    "remove_tracking": {
+      "name": "הסר מעקב",
+      "description": "הסר מספר מעקב ממעקב עלי אקספרס.",
+      "fields": {
+        "tracking_number": {
+          "name": "מספר מעקב",
+          "description": "מספר המעקב להסרה.",
+          "example": "123456789"
+        }
+      }
+    }
+  },
+  "title": "מעקב חבילות עלי אקספרס"
+}

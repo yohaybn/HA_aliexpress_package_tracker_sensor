@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure AliExpress Tracker",
+        "description": "Select the language for the integration.",
+        "data": {
+          "language": "Language"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "This integration is already configured."
+    },
+    "abort": {
+      "already_configured": "The AliExpress Tracker integration is already configured."
+    },
+    "create_entry": {
+      "default": "AliExpress Tracker has been successfully configured."
+    }
+  },
+  "services": {
+    "add_tracking": {
+      "name": "Add Tracking",
+      "description": "Add a new tracking number to AliExpress Package Tracker.",
+      "fields": {
+        "tracking_number": {
+          "name": "Tracking Number",
+          "description": "Tracking number for the new package.",
+          "example": "123456789"
+        },
+        "title": {
+          "name": "Title",
+          "description": "Custom title for the new tracking.",
+          "example": "Laptop"
+        }
+      }
+    },
+    "remove_tracking": {
+      "name": "Remove Tracking",
+      "description": "Remove a tracking number from AliExpress Package Tracker.",
+      "fields": {
+        "tracking_number": {
+          "name": "Tracking Number",
+          "description": "Tracking number to remove.",
+          "example": "123456789"
+        }
+      }
+    }
+  },
+  "title": "AliExpress Package Tracker"
+}

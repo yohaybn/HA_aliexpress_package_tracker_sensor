@@ -1,0 +1,10 @@
+{
+  "domain": "aliexpress_package_tracker",
+  "name": "Aliexpress Package Tracker",
+  "codeowners": ["@yohaybn"],
+  "config_flow": true,
+  "documentation": "https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor",
+  "issue_tracker": "https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/issues",
+  "iot_class": "cloud_polling",
+  "version": "2.0.0"
+}

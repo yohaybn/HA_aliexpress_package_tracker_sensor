@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write     # Allows write access to repository contents, which includes uploading assets
+
+jobs:
+  release_zip_file:
+    name: Prepare release asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Set manifest version number
+        run: |
+          python ${{ github.workspace }}/.github/update_manifest.py --version ${{ github.ref_name }}
+      - name: Create zip
+        run: |
+          cd custom_components/aliexpress_package_tracker
+          zip aliexpress_package_tracker.zip -r ./
+      - name: Upload zip to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./custom_components/aliexpress_package_tracker/aliexpress_package_tracker.zip
+          asset_name: aliexpress_package_tracker.zip
+          tag: ${{ github.ref }}
+          overwrite: true
