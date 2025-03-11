@@ -75,28 +75,26 @@ data:
 
 ## Lovelace Example
 
-
+Create a Markdown card and paste the code below:
 
 ```Markdown
-
 type: markdown
 content: >-
- {% for sens in integration_entities("aliexpress_package_tracker")  %}
+  {% for sens in integration_entities("aliexpress_package_tracker")  %}
   {% set entity = states[sens] %}
   >- {% if "carrier_url" in entity.attributes-%}[<ha-icon icon="mdi:information-outline"></ha-icon>]({{entity.attributes.carrier_url}}){%endif %} **{{ entity.attributes.title }} ({{
-entity.attributes.order_number }}{% if "realMailNo" in entity.attributes-%}
-  / {{entity.attributes.realMailNo }}
-{%- endif %}):**
-{% if "last_update_status" in entity.attributes-%}
-  {{entity.attributes.last_update_status }}
-{%- endif %}
-{% if "daysNumber" in entity.attributes-%}   In Transit: {{entity.attributes.daysNumber   }}   {%- endif %}
-{% endfor %}
+  entity.attributes.order_number }}{% if "realMailNo" in entity.attributes-%}
+    / {{entity.attributes.realMailNo }}
+  {%- endif %}):**
+  {% if "last_update_status" in entity.attributes-%}
+    {{entity.attributes.last_update_status }}
+  {%- endif %}
+  {% if "daysNumber" in entity.attributes-%}   In Transit: {{entity.attributes.daysNumber   }}   {%- endif %}
   {% endfor %}
 
 ```
 
-## Automation Example- Add Package Based on Email
+## Automation Example - Add Package Based on Email
 
 ### Setup IMAP Integration
 
