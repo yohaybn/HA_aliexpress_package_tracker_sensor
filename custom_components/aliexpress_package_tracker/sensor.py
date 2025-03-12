@@ -197,7 +197,7 @@ class AliexpressPackageSensor(SensorEntity):
             "last_update_status": data.get("latestTrace", {}).get("standerdDesc", "Unknown"),
             "progressStatus" : data.get("processInfo", {}).get("progressStatus"),
             "carrier": data.get("destCpInfo", {}).get("cpName"),
-            "carrier": data.get("destCpInfo", {}).get("url"),
+            "carrier_url": data.get("destCpInfo", {}).get("url"),
             "daysNumber": data.get("daysNumber"),
 
         })
