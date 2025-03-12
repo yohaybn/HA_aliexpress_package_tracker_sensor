@@ -107,17 +107,17 @@ content: >-
 # configuration.yaml
 template:
   - sensor:
-      - name: post_track
-        state: "{{ trigger.event.data['subject'] }}"
-        attributes:
-          body: "{{ trigger.event.data['text'] }}"
-        trigger:
-          - event_data:
-              custom: true # See example here [https://www.home-assistant.io/integrations/imap/#example---custom-event-data-template](https://www.home-assistant.io/integrations/imap/#example---custom-event-data-template) how to set it up
-            event_type: imap_content
-            id: custom_event
-            platform: event
-
+	- trigger:
+	  - trigger: event
+        event_type: "imap_content"
+        id: "custom_event"
+        event_data:
+          custom: true # See example here [https://www.home-assistant.io/integrations/imap/#example---custom-event-data-template](https://www.home-assistant.io/integrations/imap/#example---custom-event-data-template) how to set it up
+      sensor:
+        - name: post_track
+          state: "{{ trigger.event.data['subject'] }}"
+          attributes:
+            body: "{{ trigger.event.data['text'] }}"
 ```
 
 ### Create Tracking Number Sensors
@@ -129,9 +129,9 @@ template:
 sensor:
   - platform: template
     sensors:
-      new_tracking_namber_body:
+      new_tracking_number_body:
         value_template: "{{ state_attr('sensor.post_track','body') | base64_decode | regex_findall_index('(([A-Z]){2}([0-9]){9,10}([A-Z]){0,2})')|first }}"
-      new_tracking_namber_subject:
+      new_tracking_number_subject:
         value_template: "{{ state_attr('sensor.post_track','subject') | regex_findall_index('(([A-Z]){2}([0-9]){9,10}([A-Z]){0,2})')|first  }}"
 
 ```
@@ -144,14 +144,14 @@ sensor:
   trigger:
     - platform: state
       entity_id:
-        - sensor.new_tracking_namber_subject
+        - sensor.new_tracking_number_subject
       id: "subject"
     - platform: state
       entity_id:
-        - sensor.new_tracking_namber_body
+        - sensor.new_tracking_number_body
       id: "body"
   variables:
-    src: "sensor.new_tracking_namber_{{trigger.id}}"
+    src: "sensor.new_tracking_number_{{trigger.id}}"
   condition: "{{ trigger.to_state.state not in ['unknown', 'unavailable'] and (states(src) !='unknown' )}}"
   action:
     - service: aliexpress_package_tracker.add_tracking
