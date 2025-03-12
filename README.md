@@ -107,8 +107,8 @@ content: >-
 # configuration.yaml
 template:
   - sensor:
-	- trigger:
-	  - trigger: event
+    - trigger:
+      - trigger: event
         event_type: "imap_content"
         id: "custom_event"
         event_data:
