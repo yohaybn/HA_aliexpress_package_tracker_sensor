@@ -26,7 +26,17 @@ remove_tracking:
     tracking_number:
       name: Tracking number
       description: Tracking number of the tracking to remove
-      required: true
+      required: false
       example: "123456789"
       selector:
         text:
+    entity_id:
+      name: entity_id
+      description: The ID of the entity to remove
+      required: false
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - integration: "aliexpress_package_tracker"
+              domain: sensor

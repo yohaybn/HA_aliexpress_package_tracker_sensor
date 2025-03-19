@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Final
 import re
-from datetime import datetime
+from datetime import datetime,date
 import aiohttp
 from homeassistant.components.sensor import (
     SensorEntity,
@@ -20,11 +20,13 @@ from homeassistant.util import Throttle
 from homeassistant.helpers.storage import Store
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.event import async_track_state_change
-
+from homeassistant.const import CONF_ENTITY_ID
 from .const import (
     ADD_TRACKING_SERVICE_SCHEMA,
     ATTRIBUTION,
     CONF_TITLE,CONF_PACKAGE,
+    CONF_LANG,CONF_AUTO_DELETE
+    ,CONF_AUTO_DELETE_DAYS,
     CONF_TRACKING_NUMBER,
     DOMAIN,
     ICON,
@@ -44,6 +46,7 @@ def get_store(hass: HomeAssistant) -> Store:
 
 
 async def track_packages(hass: HomeAssistant, order_numbers, lang="en-US"):
+    _LOGGER.debug(f"track_packages for order  numbers: {order_numbers}")
     session = async_get_clientsession(hass)
     try:
         response = await session.get(
@@ -90,20 +93,25 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
             })
 
     async def get_data(order_numbers):
+        lang = config.data.get(CONF_LANG)
         data = await track_packages(hass, order_numbers, lang)
         store = get_store(hass)
         stored_data= await store.async_load() or {}
 
         if not data or "module" not in data:
             return
-        sensors = [AliexpressPackageSensor(i, extract_actual_tracking_number(i),stored_data.get(extract_actual_tracking_number(i),{}).get(CONF_TITLE,CONF_PACKAGE), hass,config.data.get("language")) for i in data["module"] if i["mailNoSource"] != "EXTERNAL"]
+        sensors = [AliexpressPackageSensor(i, extract_actual_tracking_number(i),
+                                           stored_data.get(extract_actual_tracking_number(i),{}).get(CONF_TITLE,CONF_PACKAGE),
+
+                                             hass,config.data)
+                                             for i in data["module"] if i["mailNoSource"] != "EXTERNAL"]
         sensors_to_add=list({item.name: item for item in sensors}.values())
         async_add_entities(sensors_to_add, True)
         for sensor in sensors_to_add:
             async_track_state_change(hass, f"sensor.{sensor.name.lower()}", state_change_listener)
 
     async def add_tracking(income_data: ServiceCall, title=CONF_PACKAGE) -> None:
-        tracking_number=income_data.data[CONF_TRACKING_NUMBER]
+        tracking_number=income_data.data.get(CONF_TRACKING_NUMBER).strip()
         title=income_data.data.get(CONF_TITLE) or CONF_PACKAGE
         data = await store.async_load() or {}
         if tracking_number in data:
@@ -117,14 +125,25 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         async_dispatcher_send(hass, UPDATE_TOPIC)
 
     async def remove_tracking(income_data: ServiceCall) -> None:
-        tracking_number=income_data.data[CONF_TRACKING_NUMBER]
+        tracking_number=income_data.data.get(CONF_TRACKING_NUMBER)
+        entity_id=income_data.data.get(CONF_ENTITY_ID)
         data = await store.async_load() or {}
-        data.pop(tracking_number, None)
+        if tracking_number:
+            entity_registry.async_get(hass).async_remove(f"sensor.aliexpress_package_no_{tracking_number.lower()}")
+            data.pop(tracking_number, None)
+        elif entity_id:
+            for entity in entity_id:
+                tracking_number=hass.states.get(entity).attributes["orignal_track_id"]
+                data.pop(tracking_number, None)
+                entity_registry.async_get(hass).async_remove(entity)
+        else:
+            raise  KeyError("Both entity_id and tracking_number is empty")
+
         await store.async_save(data)
-        entity_registry.async_get(hass).async_remove(f"sensor.aliexpress_package_no_{tracking_number.lower()}")
+
         async_dispatcher_send(hass, UPDATE_TOPIC)
 
-    lang = config.data.get("language")
+
     store = get_store(hass)
     stored_data = await store.async_load() or {}
     await fix_duplicate_real_numbers(hass)
@@ -153,7 +172,7 @@ class AliexpressPackageSensor(SensorEntity):
     _attr_attribution = ATTRIBUTION
     _attr_icon: str = ICON
 
-    def __init__(self, data, order_number: str,title: str, hass, lang="en-US") -> None:
+    def __init__(self, data, order_number: str,title :str, hass: HomeAssistant, config_data) -> None:
         _LOGGER.debug(f"AliexpressPackageSensor created with order_number:{order_number}\ntitle: {title} \ndata: {data}")
         self._data = data
         self._attributes: dict[str, Any] = {}
@@ -161,8 +180,9 @@ class AliexpressPackageSensor(SensorEntity):
         self._order_number = order_number
         self._attr_name = f"Aliexpress_package_no_{order_number}"
         self._hass = hass
-        self._lang=lang
+        self._lang=config_data.get(CONF_LANG)
         self._title=title or CONF_PACKAGE
+        self._config_data=config_data
 
     @property
     def unique_id(self) -> str | None:
@@ -188,7 +208,9 @@ class AliexpressPackageSensor(SensorEntity):
         if trade_id :
             return f"https://www.aliexpress.com/p/order/detail.html?orderId={trade_id}"
         return None
-    def set_attr(self,data, attrs) -> None:
+    def set_attr(self) -> None:
+        data=self._data
+        attrs= self._attributes
         attrs.update({
             CONF_TITLE: self._title,
             "order_number":self._order_number,
@@ -199,6 +221,8 @@ class AliexpressPackageSensor(SensorEntity):
             "carrier": data.get("destCpInfo", {}).get("cpName"),
             "carrier_url": data.get("destCpInfo", {}).get("url"),
             "daysNumber": data.get("daysNumber"),
+            "orignal_track_id":data.get("mailNo")
+
 
         })
         real_mail_no = extract_realMailNo(data.get("realMailNo", ""))
@@ -209,7 +233,7 @@ class AliexpressPackageSensor(SensorEntity):
             attrs["order_url"] = order_url
     @property
     def extra_state_attributes(self) -> dict[str, str]:
-        self.set_attr( self._data, self._attributes)
+        self.set_attr( )
         return self._attributes or {}
     async def async_added_to_hass(self) -> None:
         self.async_on_remove(async_dispatcher_connect(self.hass, UPDATE_TOPIC, self._force_update))
@@ -220,18 +244,42 @@ class AliexpressPackageSensor(SensorEntity):
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
     async def async_update(self, **kwargs: Any) -> None:
+        _LOGGER.debug("async_update")
         try:
             value = await track_packages(self._hass, self._order_number,self._lang)
             if value and "module" in value and value["module"]:
-                self.set_attr( self._data, self._attributes)
+                self._data=value["module"][0]
+                self.set_attr()
+                store = get_store(self.hass)
+                data =  await store.async_load() or {}
+                if self.check_for_auto_delete():
 
+
+                    await self.async_remove()
+                    data.pop( self._attributes["orignal_track_id"], None)
+                    await store.async_save(data)
+                    _LOGGER.warning(f"sensor.aliexpress_package_no_{self._order_number.lower()} was deleated!")
+                    return
                 await self.set_title_attr(self._attributes)
                 if "realMailNo" in self._attributes:
-                        store = get_store(self._hass)
-                        data =  await store.async_load() or {}
+
                         data[self._order_number]["realMailNo"]=self._attributes["realMailNo"]
                         await store.async_save(data)
                         await fix_duplicate_real_numbers(self._hass)
         except Exception as err:
             _LOGGER.debug( err)
             _LOGGER.error("Error updating package data: %s", err)
+    def check_for_auto_delete(self) -> bool:
+
+        if self._config_data.get(CONF_AUTO_DELETE) and self.entity_id:
+            status= self.state
+            last_update_time= self._attributes["last_update_time"]
+            now= datetime.now()
+            return status=="Delivered" and  (now-last_update_time).days>self._config_data.get(CONF_AUTO_DELETE_DAYS)
+        return False
+    async def async_remove(self):
+        """Remove the entity from Home Assistant."""
+        await super().async_remove()
+        entity_registry.async_get(self.hass).async_remove(self.entity_id)
+
+        _LOGGER.info(f"Entity {self.entity_id} has been removed.")
