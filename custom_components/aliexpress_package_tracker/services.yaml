@@ -1,5 +1,3 @@
-# Describes the format for available aftership services
-
 add_tracking:
   name: Add tracking
   description: Add new tracking number to aliexpress_package_tracker.
@@ -18,7 +16,6 @@ add_tracking:
       selector:
         text:
 
-
 remove_tracking:
   name: Remove tracking
   description: Remove a tracking number from aliexpress_package_tracker.
@@ -26,7 +23,38 @@ remove_tracking:
     tracking_number:
       name: Tracking number
       description: Tracking number of the tracking to remove
-      required: true
+      required: false
       example: "123456789"
+      selector:
+        text:
+    entity_id:
+      name: entity_id
+      description: The ID of the entity to remove
+      required: false
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - integration: "aliexpress_package_tracker"
+              domain: sensor
+edit_title:
+  name: "Edit Title"
+  description: "Change the title attribute of a specific AliExpress tracking entity."
+
+  fields:
+    entity_id:
+      description: "The entity ID of the AliExpress tracking sensor."
+      example: "sensor.aliexpress_order_12345"
+      required: true
+      selector:
+        entity:
+          multiple: false
+          filter:
+            - integration: "aliexpress_package_tracker"
+              domain: sensor
+    new_title:
+      description: "The new title to set for the entity."
+      example: "My New Order Name"
+      required: true
       selector:
         text:
