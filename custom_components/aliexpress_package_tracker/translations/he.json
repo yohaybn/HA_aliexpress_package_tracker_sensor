@@ -2,51 +2,80 @@
   "config": {
     "step": {
       "user": {
-        "title": "הגדר מעקב עלי אקספרס",
-        "description": "בחר את השפה עבור ההתקנה.",
+        "title": "הגדר מעקב AliExpress",
+        "description": "⚠️ 'ימי מחיקה אוטומטית' מתעלמים אם מחיקה אוטומטית כבויה.",
         "data": {
-          "language": "שפה"
+          "language": "שפה מועדפת",
+          "AUTO_DELETE": "מחק אוטומטית לאחר X ימים כאשר הסטטוס הוא 'נמסר'",
+          "AUTO_DELETE_DAYS": "מספר ימים לפני מחיקה"
         }
       }
     },
     "error": {
-      "already_configured": "ההתקנה כבר מוגדרת."
+      "already_configured": "אינטגרציה זו כבר מוגדרת."
     },
     "abort": {
-      "already_configured": "ההתקנה של מעקב עלי אקספרס כבר מוגדרת."
+      "already_configured": "אינטגרציית מעקב AliExpress כבר מוגדרת."
     },
     "create_entry": {
-      "default": "מעקב עלי אקספרס הוגדר בהצלחה."
+      "default": "מעקב AliExpress הוגדר בהצלחה."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "הגדר מעקב AliExpress",
+        "description": "⚠️ 'ימי מחיקה אוטומטית' מתעלמים אם מחיקה אוטומטית כבויה.",
+        "data": {
+          "language": "שפה מועדפת",
+          "AUTO_DELETE": "מחק אוטומטית לאחר X ימים כאשר הסטטוס הוא 'נמסר'",
+          "AUTO_DELETE_DAYS": "מספר ימים לפני מחיקה"
+        }
+      }
     }
   },
   "services": {
     "add_tracking": {
       "name": "הוסף מעקב",
-      "description": "הוסף מספר מעקב חדש למעקב עלי אקספרס.",
+      "description": "הוסף מספר מעקב חדש למעקב חבילות AliExpress.",
       "fields": {
         "tracking_number": {
           "name": "מספר מעקב",
-          "description": "מספר המעקב עבור החבילה החדשה.",
+          "description": "מספר מעקב עבור החבילה החדשה.",
           "example": "123456789"
         },
         "title": {
           "name": "כותרת",
-          "description": "כותרת מותאמת אישית למעקב החדש.",
+          "description": "כותרת מותאמת אישית עבור המעקב החדש.",
           "example": "מחשב נייד"
         }
       }
     },
     "remove_tracking": {
       "name": "הסר מעקב",
-      "description": "הסר מספר מעקב ממעקב עלי אקספרס.",
+      "description": "הסר מספר מעקב ממעקב חבילות AliExpress.",
       "fields": {
         "tracking_number": {
           "name": "מספר מעקב",
-          "description": "מספר המעקב להסרה.",
+          "description": "מספר מעקב להסרה.",
           "example": "123456789"
+        }
+      }
+    },
+    "edit_title": {
+      "name": "ערוך כותרת",
+      "description": "שנה את תכונת הכותרת של ישות מעקב AliExpress ספציפית.",
+      "fields": {
+        "entity_id": {
+          "name": "מזהה ישות",
+          "description": "מזהה הישות של חיישן מעקב AliExpress לעדכון."
+        },
+        "new_title": {
+          "name": "כותרת חדשה",
+          "description": "הכותרת החדשה להגדרה עבור הישות."
         }
       }
     }
   },
-  "title": "מעקב חבילות עלי אקספרס"
+  "title": "מעקב חבילות AliExpress"
 }

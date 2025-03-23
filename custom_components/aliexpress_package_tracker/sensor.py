@@ -117,6 +117,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         if tracking_number in data:
             current_title = data[tracking_number].get(CONF_TITLE, CONF_PACKAGE)
             data[tracking_number][CONF_TITLE] = current_title + f', {title}' if current_title != CONF_PACKAGE else title
+
         else:
             data[tracking_number] = {CONF_TITLE: title, "tracking_number": tracking_number}
         await store.async_save(data)
@@ -143,6 +144,28 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 
         async_dispatcher_send(hass, UPDATE_TOPIC)
 
+    async def edit_title_service(call: ServiceCall):
+        """Handle the service call to edit the title attribute of a sensor."""
+        entity_id = call.data.get("entity_id")
+        new_title = call.data.get("new_title")
+
+        if not entity_id or not new_title:
+            _LOGGER.error("Missing required parameters: entity_id or new_title")
+            return
+        entity_id = entity_id[0]
+        # Get entity state
+        entity = hass.states.get(entity_id)
+        if not entity:
+            _LOGGER.error(f"Entity {entity_id} not found")
+            return
+
+        # Update state attributes
+        updated_attributes = dict(entity.attributes)
+        updated_attributes["title"] = new_title
+
+        # Apply changes
+        hass.states.async_set(entity_id, entity.state, updated_attributes)
+        _LOGGER.info(f"Updated title of {entity_id} to '{new_title}'")
 
     store = get_store(hass)
     stored_data = await store.async_load() or {}
@@ -168,6 +191,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         add_tracking,
         schema=ADD_TRACKING_SERVICE_SCHEMA,
     )
+    hass.services.async_register(DOMAIN, "edit_title", edit_title_service)
 class AliexpressPackageSensor(SensorEntity):
     _attr_attribution = ATTRIBUTION
     _attr_icon: str = ICON
@@ -253,8 +277,6 @@ class AliexpressPackageSensor(SensorEntity):
                 store = get_store(self.hass)
                 data =  await store.async_load() or {}
                 if self.check_for_auto_delete():
-
-
                     await self.async_remove()
                     data.pop( self._attributes["orignal_track_id"], None)
                     await store.async_save(data)
@@ -262,7 +284,6 @@ class AliexpressPackageSensor(SensorEntity):
                     return
                 await self.set_title_attr(self._attributes)
                 if "realMailNo" in self._attributes:
-
                         data[self._order_number]["realMailNo"]=self._attributes["realMailNo"]
                         await store.async_save(data)
                         await fix_duplicate_real_numbers(self._hass)
@@ -270,7 +291,6 @@ class AliexpressPackageSensor(SensorEntity):
             _LOGGER.debug( err)
             _LOGGER.error("Error updating package data: %s", err)
     def check_for_auto_delete(self) -> bool:
-
         if self._config_data.get(CONF_AUTO_DELETE) and self.entity_id:
             status= self.state
             last_update_time= self._attributes["last_update_time"]
@@ -281,5 +301,4 @@ class AliexpressPackageSensor(SensorEntity):
         """Remove the entity from Home Assistant."""
         await super().async_remove()
         entity_registry.async_get(self.hass).async_remove(self.entity_id)
-
         _LOGGER.info(f"Entity {self.entity_id} has been removed.")
