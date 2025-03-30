@@ -20,7 +20,7 @@ jobs:
           python-version: "3.13"
       - name: Set manifest version number
         run: |
-          python ${{ github.workspace }}/.github/update_manifest.py --version ${{ github.ref_name }}
+          python3 ${{ github.workspace }}/.github/update_manifest.py --version ${{ github.ref_name }}
       - name: Create zip
         run: |
           cd custom_components/aliexpress_package_tracker
