@@ -354,6 +354,8 @@ class AliexpressPackageSensor(SensorEntity):
                 "carrier_url": data.get("destCpInfo", {}).get("url"),
                 "daysNumber": data.get("daysNumber"),
                 "orignal_track_id": data.get("mailNo"),
+                "originCountry": data.get("originCountry"),
+                "destCountry": data.get("destCountry"),
             }
         )
         real_mail_no = extract_realMailNo(data.get("realMailNo", ""))
