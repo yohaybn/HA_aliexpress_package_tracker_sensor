@@ -94,7 +94,7 @@ def extract_realMailNo(data) -> str | None:
         return realMailNo
     # If copyRealMailNo is not found, try to extract it from realMailNo
     realMailNo = data.get("realMailNo", "")
-    regex = "(([A-Z]){0,2}([0-9]){9,10}([A-Z]){0,2})"
+    regex = "(([A-Z]){0,3}([0-9]){9,30}([A-Z]){0,2})" #(([A-Z]){0,2}([0-9]){9,10}([A-Z]){0,2})"
     match = re.search(regex, realMailNo)
     return match.group() if match else data.get("mailNo", None)
 
