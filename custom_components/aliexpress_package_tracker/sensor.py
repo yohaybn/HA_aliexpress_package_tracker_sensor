@@ -96,7 +96,7 @@ def extract_realMailNo(data) -> str | None:
     realMailNo = data.get("realMailNo", "")
     regex = "(([A-Z]){0,2}([0-9]){9,10}([A-Z]){0,2})"
     match = re.search(regex, realMailNo)
-    return match.group() if match else None
+    return match.group() if match else data.get("mailNo", None)
 
 
 def _clean_tracking_number(tracking_number: str) -> str:
@@ -257,7 +257,21 @@ async def async_setup_entry(
             for entity in entity_id:
                 tracking_number = hass.states.get(entity).attributes["order_number"]
                 data.pop(tracking_number, None)
-                er.async_get(hass).async_remove(entity)
+                registry = er.async_get(hass)
+                if registry.async_is_registered(entity):
+                    _LOGGER.debug(
+                        "Entity '%s' found in registry, attempting removal", entity
+                    )
+                    registry.async_remove(entity)
+                    _LOGGER.info(
+                        "Successfully removed entity '%s' from the registry", entity
+                    )
+                else:
+                    _LOGGER.debug(
+                        "Entity '%s' not found in registry, skipping removal",
+                        entity,
+                    )
+
         else:
             raise KeyError("Both entity_id and tracking_number is empty")
 
@@ -393,17 +407,18 @@ class AliexpressPackageSensor(SensorEntity):
             == stored_data.get(self._order_number, {}).get(CONF_TRACKING_NUMBER)
             else stored_data.get(self._order_number, {}).get(CONF_TRACKING_NUMBER)
         )
-        # remove duplicate track_ids
-        track_ids = self._orignal_track_id.split(",")
-        unique_items_set = set(track_ids)
-        self._orignal_track_id = ", ".join(unique_items_set)
+        if self._orignal_track_id:
+            # remove duplicate track_ids
+            track_ids = self._orignal_track_id.split(",")
+            unique_items_set = set(track_ids)
+            self._orignal_track_id = ", ".join(unique_items_set)
 
-        attrs.update(
-            {
-                CONF_TITLE: self._title,
-                "orignal_track_ids": self._orignal_track_id,
-            }
-        )
+            attrs.update(
+                {
+                    CONF_TITLE: self._title,
+                    "orignal_track_ids": self._orignal_track_id,
+                }
+            )
 
     def get_trade_id(self, url) -> str | None:
         """Extract the trade ID from a given URL.
