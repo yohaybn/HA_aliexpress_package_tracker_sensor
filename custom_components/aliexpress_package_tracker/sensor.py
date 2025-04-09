@@ -82,15 +82,20 @@ async def _fetch_cainiao_data(hass: HomeAssistant, order_numbers, lang="en-US"):
         )
 
 
-def extract_realMailNo(string) -> str | None:
+def extract_realMailNo(data) -> str | None:
     """Extract the real mail number from a given string using a regex pattern.
 
     Returns:
         str | None: The extracted mail number if found, otherwise None.
 
     """
-    regex = "(([A-Z]){2}([0-9]){9,10}([A-Z]){0,2})"
-    match = re.search(regex, string)
+    realMailNo = data.get("copyRealMailNo", None)
+    if realMailNo is not None:
+        return realMailNo
+    # If copyRealMailNo is not found, try to extract it from realMailNo
+    realMailNo = data.get("realMailNo", "")
+    regex = "(([A-Z]){0,2}([0-9]){9,10}([A-Z]){0,2})"
+    match = re.search(regex, realMailNo)
     return match.group() if match else None
 
 
@@ -132,7 +137,7 @@ async def async_setup_entry(
     """Set up the Aliexpress package tracker sensor platform."""
 
     def extract_actual_tracking_number(data) -> str | None:
-        realMailNo = extract_realMailNo(data.get("realMailNo", ""))
+        realMailNo = extract_realMailNo(data)
         _LOGGER.debug("realMailNo is: %s", realMailNo)
         return realMailNo if realMailNo else data["mailNo"]
 
