@@ -29,7 +29,7 @@ UPDATE_TOPIC: Final = f"{DOMAIN}_update"
 
 ICON: Final = "mdi:package-variant-closed"
 
-MIN_TIME_BETWEEN_UPDATES: Final = timedelta(hours=1)  # (days=1)
+MIN_TIME_BETWEEN_UPDATES: Final = timedelta(hours=6)  # alibaba start to block unusal traffic
 
 SERVICE_ADD_TRACKING: Final = "add_tracking"
 SERVICE_REMOVE_TRACKING: Final = "remove_tracking"
