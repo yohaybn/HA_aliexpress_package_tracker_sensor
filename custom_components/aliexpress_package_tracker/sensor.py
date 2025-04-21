@@ -82,16 +82,21 @@ async def _fetch_cainiao_data(hass: HomeAssistant, order_numbers, lang="en-US"):
         )
 
 
-def extract_realMailNo(string) -> str | None:
+def extract_realMailNo(data) -> str | None:
     """Extract the real mail number from a given string using a regex pattern.
 
     Returns:
         str | None: The extracted mail number if found, otherwise None.
 
     """
-    regex = "(([A-Z]){2}([0-9]){9,10}([A-Z]){0,2})"
-    match = re.search(regex, string)
-    return match.group() if match else None
+    realMailNo = data.get("copyRealMailNo", None)
+    if realMailNo is not None:
+        return realMailNo
+    # If copyRealMailNo is not found, try to extract it from realMailNo
+    realMailNo = data.get("realMailNo", "")
+    regex = "(([A-Z]){0,3}([0-9]){9,30}([A-Z]){0,2})" #(([A-Z]){0,2}([0-9]){9,10}([A-Z]){0,2})"
+    match = re.search(regex, realMailNo)
+    return match.group() if match else data.get("mailNo", None)
 
 
 def _clean_tracking_number(tracking_number: str) -> str:
@@ -132,7 +137,7 @@ async def async_setup_entry(
     """Set up the Aliexpress package tracker sensor platform."""
 
     def extract_actual_tracking_number(data) -> str | None:
-        realMailNo = extract_realMailNo(data.get("realMailNo", ""))
+        realMailNo = extract_realMailNo(data)
         _LOGGER.debug("realMailNo is: %s", realMailNo)
         return realMailNo if realMailNo else data["mailNo"]
 
@@ -252,7 +257,21 @@ async def async_setup_entry(
             for entity in entity_id:
                 tracking_number = hass.states.get(entity).attributes["order_number"]
                 data.pop(tracking_number, None)
-                er.async_get(hass).async_remove(entity)
+                registry = er.async_get(hass)
+                if registry.async_is_registered(entity):
+                    _LOGGER.debug(
+                        "Entity '%s' found in registry, attempting removal", entity
+                    )
+                    registry.async_remove(entity)
+                    _LOGGER.info(
+                        "Successfully removed entity '%s' from the registry", entity
+                    )
+                else:
+                    _LOGGER.debug(
+                        "Entity '%s' not found in registry, skipping removal",
+                        entity,
+                    )
+
         else:
             raise KeyError("Both entity_id and tracking_number is empty")
 
@@ -388,17 +407,18 @@ class AliexpressPackageSensor(SensorEntity):
             == stored_data.get(self._order_number, {}).get(CONF_TRACKING_NUMBER)
             else stored_data.get(self._order_number, {}).get(CONF_TRACKING_NUMBER)
         )
-        # remove duplicate track_ids
-        track_ids = self._orignal_track_id.split(",")
-        unique_items_set = set(track_ids)
-        self._orignal_track_id = ", ".join(unique_items_set)
+        if self._orignal_track_id:
+            # remove duplicate track_ids
+            track_ids = self._orignal_track_id.split(",")
+            unique_items_set = set(track_ids)
+            self._orignal_track_id = ", ".join(unique_items_set)
 
-        attrs.update(
-            {
-                CONF_TITLE: self._title,
-                "orignal_track_ids": self._orignal_track_id,
-            }
-        )
+            attrs.update(
+                {
+                    CONF_TITLE: self._title,
+                    "orignal_track_ids": self._orignal_track_id,
+                }
+            )
 
     def get_trade_id(self, url) -> str | None:
         """Extract the trade ID from a given URL.
