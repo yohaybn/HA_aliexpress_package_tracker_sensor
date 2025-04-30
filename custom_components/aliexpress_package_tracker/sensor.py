@@ -439,7 +439,7 @@ class AliexpressPackageSensor(CoordinatorEntity, SensorEntity):
             new_attrs = {
                 CONF_TITLE: sensor_data.get(CONF_TITLE, CONF_PACKAGE),
                 "order_number": self._order_number,  # The actual ID used
-                "original_tracking_numbers": sensor_data.get(
+                "orignal_track_ids": sensor_data.get(
                     "original_tracking_numbers", self._order_number
                 ),
                 "status": api_data.get("statusDesc", "Unknown"),
