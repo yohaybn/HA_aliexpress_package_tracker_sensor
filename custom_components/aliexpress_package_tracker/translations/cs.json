@@ -56,7 +56,7 @@
       "description": "Odebrat sledovací číslo ze Sledování zásilek z AliExpressu.",
       "fields": {
         "tracking_number": {
-          "name": "Sledovací číslo,
+          "name": "Sledovací číslo",
           "description": "Sledovací číslo k odebrání.",
           "example": "123456789"
         }
