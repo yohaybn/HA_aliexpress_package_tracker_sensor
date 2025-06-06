@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Nastavit sledovač AliExpress",
-        "description": "⚠️ 'Dny do automatického smazání' jsou ignorovány, pokud je automatické mazání vypnuto.",
+        "description": "⚠️ 'Počet dní do smazání' je ignorováno, pokud je automatické mazání vypnuto.",
         "data": {
           "language": "Preferovaný jazyk",
           "AUTO_DELETE": "Automaticky smazat po X dní od stavu 'Doručeno'",
@@ -25,7 +25,7 @@
     "step": {
       "init": {
         "title": "Nastavit sledovač AliExpress",
-        "description": "⚠️ 'Dny do automatického smazání' jsou ignorovány, pokud je automatické mazání vypnuto.",
+        "description": "⚠️ 'Počet dní do smazání' je ignorováno, pokud je automatické mazání vypnuto.",
         "data": {
           "language": "Preferovaný jazyk",
           "AUTO_DELETE": "Automaticky smazat po X dní od stavu 'Doručeno'",
