@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Nastavit sledovač AliExpress",
+        "description": "⚠️ 'Počet dní do smazání' je ignorováno, pokud je automatické mazání vypnuto.",
+        "data": {
+          "language": "Preferovaný jazyk",
+          "AUTO_DELETE": "Automaticky smazat po X dní od stavu 'Doručeno'",
+          "AUTO_DELETE_DAYS": "Počet dní do smazání"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Tato integrace je již nastavena."
+    },
+    "abort": {
+      "already_configured": "Integrace Sledování zásilek z AliExpressu je již nastavena."
+    },
+    "create_entry": {
+      "default": "Sledovač AliExpress je již nastaven."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Nastavit sledovač AliExpress",
+        "description": "⚠️ 'Počet dní do smazání' je ignorováno, pokud je automatické mazání vypnuto.",
+        "data": {
+          "language": "Preferovaný jazyk",
+          "AUTO_DELETE": "Automaticky smazat po X dní od stavu 'Doručeno'",
+          "AUTO_DELETE_DAYS": "Počet dní do smazání"
+        }
+      }
+    }
+  },
+  "services": {
+    "add_tracking": {
+      "name": "Přidat sledování",
+      "description": "Přidat nové sledovací číslo do Sledování zásilek z AliExpressu.",
+      "fields": {
+        "tracking_number": {
+          "name": "Sledovací číslo",
+          "description": "Sledovací číslo pro novou zásilku.",
+          "example": "123456789"
+        },
+        "title": {
+          "name": "Název",
+          "description": "Vlastní název pro nové sledování.",
+          "example": "Notebook"
+        }
+      }
+    },
+    "remove_tracking": {
+      "name": "Odebrat sledování",
+      "description": "Odebrat sledovací číslo ze Sledování zásilek z AliExpressu.",
+      "fields": {
+        "tracking_number": {
+          "name": "Sledovací číslo",
+          "description": "Sledovací číslo k odebrání.",
+          "example": "123456789"
+        }
+      }
+    },
+    "edit_title": {
+      "name": "Upravit název",
+      "description": "Změnit atribut Název konkrétní entitě sledovače AliExpress.",
+      "fields": {
+        "entity_id": {
+          "name": "ID entity",
+          "description": "ID entity senzoru sledovače AliExpress k aktualizaci."
+        },
+        "new_title": {
+          "name": "Nový název",
+          "description": "Nový název k nastavení pro entitu."
+        }
+      }
+    }
+  },
+  "title": "Sledování zásilek z AliExpressu"
+}
