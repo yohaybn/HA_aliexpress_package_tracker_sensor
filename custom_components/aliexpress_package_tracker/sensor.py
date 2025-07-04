@@ -1,5 +1,3 @@
-# --- START OF FILE sensor.py ---
-
 """Support for aliexpress_package_tracker sensors."""
 
 from __future__ import annotations
@@ -15,6 +13,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_ENTITY_ID
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.event import async_track_state_change
+
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
@@ -44,9 +44,7 @@ from .helpers import (  # Import helpers
     remove_entity_from_registry,
 )
 
-
 _LOGGER: Final = logging.getLogger(__name__)
-
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -58,6 +56,20 @@ async def async_setup_entry(
     coordinator: DataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
         COORDINATOR
     ]
+    async def state_change_listener(entity_id, old_state, new_state):
+        if old_state and old_state != new_state:
+            # Fire a custom event
+            hass.bus.async_fire("aliexpress_package_data_updated", {
+                "entity_id": entity_id,
+                "old_state": old_state.state if old_state else None,
+                "new_state": new_state.state if new_state else None,
+            })
+            _LOGGER.debug(
+                "State change detected for %s: %s -> %s",
+                entity_id,
+                old_state.state if old_state else "None",
+                new_state.state,
+            )
     store = get_store(hass)
 
     # Add sensors for existing data from the coordinator
@@ -66,6 +78,10 @@ async def async_setup_entry(
     if coordinator.data:
         for order_number, data in coordinator.data.items():
             sensors.append(AliexpressPackageSensor(coordinator, order_number))
+
+    if sensors:
+        for sensor in sensors:
+            async_track_state_change(hass, f"sensor.{sensor.name.lower().replace(" ","_")}", state_change_listener)
 
     async_add_entities(sensors, True)  # Add initial sensors
 
@@ -540,9 +556,3 @@ class AliexpressPackageSensor(CoordinatorEntity, SensorEntity):
                 if (now - last_update_time) > timedelta(days=days_threshold):
                     return True
         return False
-
-    # No need for async_update, async_added_to_hass, _force_update
-    # CoordinatorEntity handles the updates via _handle_coordinator_update
-
-
-# --- END OF FILE sensor.py ---
