@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura AliExpress Tracker",
+        "description": "⚠️ 'Numero di giorni prima di eliminare' è ignorato se elimina automaticamente è disabilitato.",
+        "data": {
+          "language": "Lingua Preferita",
+          "AUTO_DELETE": "Elimina automaticamente dopo X giorni quando lo stato è 'Consegnato'",
+          "AUTO_DELETE_DAYS": "Numero di giorni prima di eliminare"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Questa integrazione è già configurata."
+    },
+    "abort": {
+      "already_configured": "L'integrazione AliExpress Tracker è già configurata."
+    },
+    "create_entry": {
+      "default": "Configurazione di AliExpress Tracker completata."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configura AliExpress Tracker",
+        "description": "⚠️ 'Numero di giorni prima di eliminare' è ignorato se elimina automaticamente è disabilitato.",
+        "data": {
+          "language": "Lingua Preferita",
+          "AUTO_DELETE": "Elimina automaticamente dopo X giorni quando lo stato è 'Consegnato'",
+          "AUTO_DELETE_DAYS": "Numero di giorni prima di eliminare"
+        }
+      }
+    }
+  },
+  "services": {
+    "add_tracking": {
+      "name": "Aggiungi Tracking",
+      "description": "Aggiungi un nuovo numero di tracking a AliExpress Package Tracker.",
+      "fields": {
+        "tracking_number": {
+          "name": "Numero Di Tracking",
+          "description": "Numero di tracking per il nuovo pacco.",
+          "example": "123456789"
+        },
+        "title": {
+          "name": "Titolo",
+          "description": "Titolo personalizzato per il tracking.",
+          "example": "Laptop"
+        }
+      }
+    },
+    "remove_tracking": {
+      "name": "Rimuovi Tracking",
+      "description": "Rimuovi un numero di tracking da AliExpress Package Tracker.",
+      "fields": {
+        "tracking_number": {
+          "name": "Numero Di Tracking",
+          "description": "Numero di tracking da rimuovere.",
+          "example": "123456789"
+        }
+      }
+    },
+    "edit_title": {
+      "name": "Modifica Titolo",
+      "description": "Cambia il titolo di un'entità specifica di tracking AliExpress.",
+      "fields": {
+        "entity_id": {
+          "name": "ID Entità",
+          "description": "L'ID dell'identità tracking AliExpress da aggiornare."
+        },
+        "new_title": {
+          "name": "Nuovo Titolo",
+          "description": "Nuovo titolo da impostare all'entità."
+        }
+      }
+    }
+  },
+  "title": "AliExpress Package Tracker"
+}
