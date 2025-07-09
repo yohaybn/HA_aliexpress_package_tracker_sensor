@@ -57,7 +57,7 @@ async def async_setup_entry(
         COORDINATOR
     ]
     async def state_change_listener(entity_id, old_state, new_state):
-        if old_state and old_state != new_state:
+        if old_state and new_state and old_state != new_state:
             # Fire a custom event
             hass.bus.async_fire("aliexpress_package_data_updated", {
                 "entity_id": entity_id,
