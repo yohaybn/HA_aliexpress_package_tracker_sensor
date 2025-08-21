@@ -14,6 +14,7 @@ from homeassistant.const import CONF_ENTITY_ID
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change
+from homeassistant.helpers.event import async_track_state_change_event
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -56,7 +57,11 @@ async def async_setup_entry(
     coordinator: DataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
         COORDINATOR
     ]
-    async def state_change_listener(entity_id, old_state, new_state):
+    async def state_change_listener(event):
+        entity_id = event.data.get("entity_id")
+        old_state = event.data.get("old_state")
+        new_state = event.data.get("new_state")
+        
         if old_state and new_state and old_state != new_state:
             # Fire a custom event
             hass.bus.async_fire("aliexpress_package_data_updated", {
@@ -81,7 +86,7 @@ async def async_setup_entry(
 
     if sensors:
         for sensor in sensors:
-            async_track_state_change(hass, f"sensor.{sensor.name.lower().replace(" ","_")}", state_change_listener)
+            async_track_state_change_event(hass, f"sensor.{sensor.name.lower().replace(" ","_")}", state_change_listener)
 
     async_add_entities(sensors, True)  # Add initial sensors
 
