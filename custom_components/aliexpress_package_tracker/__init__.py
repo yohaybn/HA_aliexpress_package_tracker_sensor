@@ -27,6 +27,7 @@ from .helpers import (
     get_store,
 )
 
+PLATFORMS: list[str] = ["sensor", "event"] 
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -218,7 +219,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
     _LOGGER.debug("Unloading Aliexpress package tracker entry")
-    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, "sensor")
+    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, PLATFORMS)
 
     if unload_ok:
         # Clean up hass.data
@@ -235,5 +236,3 @@ async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     _LOGGER.debug("Reloading entry due to update listener: %s", entry.entry_id)
     await hass.config_entries.async_reload(entry.entry_id)
 
-
-# --- END OF FILE __init__.py ---
