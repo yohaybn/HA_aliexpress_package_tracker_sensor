@@ -61,7 +61,7 @@ async def async_setup_entry(
         old_state = event.data.get("old_state")
         new_state = event.data.get("new_state")
         
-        if old_state and new_state and old_state != new_state:
+        if old_state and new_state and old_state.state.strip()  != new_state.state.strip() :
             # Fire a custom event
             hass.bus.async_fire("aliexpress_package_data_updated", {
                 "entity_id": entity_id,
