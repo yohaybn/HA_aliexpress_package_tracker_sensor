@@ -203,7 +203,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     await coordinator.async_config_entry_first_refresh()
 
     # Setup sensors
-    await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
+    await hass.config_entries.async_forward_entry_setups(entry,PLATFORMS )
 
     # Reload listener
     entry.async_on_unload(entry.add_update_listener(update_listener))
@@ -219,7 +219,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType):
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
     _LOGGER.debug("Unloading Aliexpress package tracker entry")
-    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, PLATFORMS)
+    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, "sensor")
 
     if unload_ok:
         # Clean up hass.data
