@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "Pacotes AliExpress",
+    "no_packages": "Nenhum pacote rastreado encontrado.",
+    "enter_tracking_number": "Digite o número de rastreamento",
+    "add_tracking": "Adicionar Rastreamento",
+    "edit_title": "Editar Título",
+    "remove_tracking": "Remover Rastreamento",
+    "not_available": "N/D"
+  },
+  "attribute": {
+    "order_number": "Número de Rastreamento",
+    "last_update_time": "Última Atualização",
+    "status": "Status Geral",
+    "last_update_status": "Detalhe do Último Evento",
+    "progressStatus": "Status do Progresso",
+    "carrier": "Transportadora",
+    "carrier_url": "URL da Transportadora",
+    "daysNumber": "Dias Desde o Envio",
+    "orignal_track_ids": "ID de Rastreamento",
+    "order_url": "URL do Pedido",
+    "originCountry": "País de Origem",
+    "destCountry": "País de Destino"
+  },
+  "editor": {
+    "card_title": "Título do Cartão",
+    "hide_add_tracking": "Ocultar Seção 'Adicionar Rastreamento'",
+    "exclude_attributes": "Excluir Atributos (Selecione para ocultar)",
+    "attribute_label": "Atributo: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normal",
+    "ABNORMAL": "Anormal",
+    "UNKNOWN": "Desconhecido"
+  }
+}

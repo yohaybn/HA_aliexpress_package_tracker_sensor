@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "AliExpress-paket",
+    "no_packages": "Inga spårade paket hittades.",
+    "enter_tracking_number": "Ange spårningsnummer",
+    "add_tracking": "Lägg till spårning",
+    "edit_title": "Redigera titel",
+    "remove_tracking": "Ta bort spårning",
+    "not_available": "Ej tillgänglig"
+  },
+  "attribute": {
+    "order_number": "Ordernummer",
+    "status": "Status",
+    "last_update_time": "Senaste uppdateringstid",
+    "last_update_status": "Senaste uppdateringsstatus",
+    "progressStatus": "Förloppsstatus",
+    "carrier": "Speditör",
+    "carrier_url": "Speditörs-URL",
+    "daysNumber": "Dagar sedan skickat",
+    "orignal_track_ids": "Spårnings-ID",
+    "order_url": "Order-URL",
+    "originCountry": "Ursprungsland",
+    "destCountry": "Destinationsland"
+  },
+  "editor": {
+    "card_title": "Korttitel",
+    "hide_add_tracking": "Dölj avsnittet 'Lägg till spårning'",
+    "exclude_attributes": "Exkludera attribut (Välj för att dölja)",
+    "attribute_label": "Attribut: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normal",
+    "ABNORMAL": "Onormal",
+    "UNKNOWN": "Okänd"
+  }
+}

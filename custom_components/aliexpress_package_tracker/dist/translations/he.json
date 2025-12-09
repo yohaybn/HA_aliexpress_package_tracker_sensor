@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "חבילות AliExpress",
+    "no_packages": "לא נמצאו חבילות במעקב.",
+    "enter_tracking_number": "הזן מספר מעקב",
+    "add_tracking": "הוסף מעקב",
+    "edit_title": "ערוך כותרת",
+    "remove_tracking": "הסר מעקב",
+    "not_available": "לא זמין"
+  },
+  "attribute": {
+    "order_number": "מספר מעקב",
+    "last_update_time": "זמן עדכון אחרון",
+    "status": "סטטוס כללי",      
+    "last_update_status": "פרטי אירוע אחרון",
+    "progressStatus": "סטטוס התקדמות",
+    "carrier": "מוביל",
+    "carrier_url": "כתובת URL של המוביל",
+    "daysNumber": "ימים מאז המשלוח",
+    "orignal_track_ids": " מזהה מעקב מקורי",
+    "order_url": "כתובת URL של ההזמנה",
+    "originCountry": "ארץ מוצא",
+    "destCountry": "ארץ יעד"
+  },
+  "editor": {
+    "card_title": "כותרת כרטיס",
+    "hide_add_tracking": "הסתר מקטע 'הוסף מעקב'",
+    "exclude_attributes": "אל תכלול מאפיינים (בחר להסתרה)",
+    "attribute_label": "מאפיין: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "תקין",
+    "ABNORMAL": "לא תקין",
+    "UNKNOWN": "לא ידוע"
+  }
+}

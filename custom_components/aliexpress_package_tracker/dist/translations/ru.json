@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "Посылки с AliExpress",
+    "no_packages": "Отслеживаемых посылок не найдено.",
+    "enter_tracking_number": "Введите трек-номер для отслеживания",
+    "add_tracking": "Добавить трек-номер",
+    "edit_title": "Редактировать название",
+    "remove_tracking": "Удалить трек-номер",
+    "not_available": "N/A"
+  },
+  "attribute": {
+    "order_number": "Трек-номер",
+    "last_update_time": "Последнее обновление",
+    "status": "Состояние",
+    "last_update_status": "Последний статус",
+    "progressStatus": "Статус",
+    "carrier": "Перевозчик",
+    "carrier_url": "Сайт перевозчика",
+    "daysNumber": "Дней с отправки",
+    "orignal_track_ids": "ID отслеживания",
+    "order_url": "URL-адрес заказа",
+    "originCountry": "Страна происхождения",
+    "destCountry": "Страна назначения"
+  },
+  "editor": {
+    "card_title": "Название карточки",
+    "hide_add_tracking": "Скрыть строку Добавить трек-номер",
+    "exclude_attributes": "Исключить атрибуты (выберите, чтобы скрыть)",
+    "attribute_label": "Атрибуты: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Нормальный",
+    "ABNORMAL": "Аномальный",
+    "UNKNOWN": "Неизвестный"
+  }
+}

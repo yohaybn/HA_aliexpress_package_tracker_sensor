@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "Paczek z AliExpress",
+    "no_packages": "Brak śledzonych przesyłek.",
+    "enter_tracking_number": "Wprowadź numer śledzenia",
+    "add_tracking": "Dodaj śledzenie",
+    "edit_title": "Edytuj tytuł",
+    "remove_tracking": "Usuń śledzenie",
+    "not_available": "N/D"
+  },
+  "attribute": {
+    "order_number": "Numer śledzenia",
+    "last_update_time": "Ostatnia aktualizacja",
+    "status": "Ogólny status",
+    "last_update_status": "Szczegóły ostatniego zdarzenia",
+    "progressStatus": "Postęp przesyłki",
+    "carrier": "Przewoźnik",
+    "carrier_url": "Adres przewoźnika",
+    "daysNumber": "Dni od nadania",
+    "orignal_track_ids": "ID śledzenia",
+    "order_url": "Adres zamówienia",
+    "originCountry": "Kraj nadania",
+    "destCountry": "Kraj docelowy"
+  },
+  "editor": {
+    "card_title": "Tytuł karty",
+    "hide_add_tracking": "Ukryj sekcję 'Dodaj śledzenie'",
+    "exclude_attributes": "Atrybuty do ukrycia (zaznacz)",
+    "attribute_label": "Atrybut: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normalny",
+    "ABNORMAL": "Nieprawidłowy",
+    "UNKNOWN": "Nieznany"
+  }
+}

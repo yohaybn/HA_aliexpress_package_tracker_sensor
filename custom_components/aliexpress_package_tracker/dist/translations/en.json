@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "AliExpress Packages",
+    "no_packages": "No tracked packages found.",
+    "enter_tracking_number": "Enter tracking number",
+    "add_tracking": "Add Tracking",
+    "edit_title": "Edit Title",
+    "remove_tracking": "Remove Tracking",
+    "not_available": "N/A"
+  },
+  "attribute": {
+    "order_number": "Tracking Number",
+    "last_update_time": "Last Update Time",
+    "status": "Overall Status",
+    "last_update_status": "Last Event Detail",
+    "progressStatus": "Progress Status",
+    "carrier": "Carrier",
+    "carrier_url": "Carrier URL",
+    "daysNumber": "Days Since Shipped",
+    "orignal_track_ids": "Tracking ID",
+    "order_url": "Order URL",
+    "originCountry": "Origin Country",
+    "destCountry": "Destination Country"
+  },
+  "editor": {
+    "card_title": "Card Title",
+    "hide_add_tracking": "Hide 'Add Tracking' Section",
+    "exclude_attributes": "Exclude Attributes (Select to hide)",
+    "attribute_label": "Attribute: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normal",
+    "ABNORMAL": "Abnormal",
+    "UNKNOWN": "Unknown"
+  }
+}

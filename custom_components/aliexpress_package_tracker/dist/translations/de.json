@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "AliExpress-Pakete",
+    "no_packages": "Keine verfolgten Pakete gefunden.",
+    "enter_tracking_number": "Sendungsnummer eingeben",
+    "add_tracking": "Sendungsverfolgung hinzufügen",
+    "edit_title": "Titel bearbeiten",
+    "remove_tracking": "Sendungsverfolgung entfernen",
+    "not_available": "N/V"
+  },
+  "attribute": {
+    "order_number": "Bestellnummer",
+    "status": "Status",
+    "last_update_time": "Letzte Aktualisierung",
+    "last_update_status": "Letzter Status",
+    "progressStatus": "Fortschrittsstatus",
+    "carrier": "Transportunternehmen",
+    "carrier_url": "URL Transportunternehmen",
+    "daysNumber": "Tage seit Versand",
+    "orignal_track_ids": "Sendungs-ID",
+    "order_url": "Bestell-URL",
+    "originCountry": "Herkunftsland",
+    "destCountry": "Zielland"
+  },
+  "editor": {
+    "card_title": "Kartentitel",
+    "hide_add_tracking": "Bereich 'Sendungsverfolgung hinzufügen' ausblenden",
+    "exclude_attributes": "Attribute ausschließen (Zum Ausblenden auswählen)",
+    "attribute_label": "Attribut: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normal",
+    "ABNORMAL": "Abnormal",
+    "UNKNOWN": "Unbekannt"
+  }
+}

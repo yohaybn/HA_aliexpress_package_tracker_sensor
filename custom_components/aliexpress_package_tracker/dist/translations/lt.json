@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "AliExpress Siuntos",
+    "no_packages": "Sekamų siuntų nerasta.",
+    "enter_tracking_number": "Įveskite siuntos numerį",
+    "add_tracking": "Pridėti siuntos numerį",
+    "edit_title": "Redaguoti pavadinimą",
+    "remove_tracking": "Pašalinti siuntos numerį",
+    "not_available": "Nėra"
+  },
+  "attribute": {
+    "order_number": "Sekimo numeris",
+    "last_update_time": "Paskutinio atnaujinimo laikas",
+    "status": "Bendroji būsena",
+    "last_update_status": "Paskutinio įvykio detalės",
+    "progressStatus": "Progreso būsena",
+    "carrier": "Vežėjas",
+    "carrier_url": "Vežėjo nuoroda",
+    "daysNumber": "Dienų nuo išsiuntimo",
+    "orignal_track_ids": "Sekimo ID",
+    "order_url": "Užsakymo nuoroda",
+    "originCountry": "Kilmės šalis",
+    "destCountry": "Gavimo šalis"
+  },
+  "editor": {
+    "card_title": "Kortelės pavadinimas",
+    "hide_add_tracking": "Slėpti 'Pridėti siuntos numerį' skyrių",
+    "exclude_attributes": "Išskirti atributus (pasirinkite, ką slėpti)",
+    "attribute_label": "Atributas: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normalus",
+    "ABNORMAL": "Nenormalus",
+    "UNKNOWN": "Nežinomas"
+  }
+}

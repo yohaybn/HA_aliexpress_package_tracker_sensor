@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "طرود AliExpress",
+    "no_packages": "لم يتم العثور على طرود متتبعة.",
+    "enter_tracking_number": "أدخل رقم التتبع",
+    "add_tracking": "إضافة تتبع",
+    "edit_title": "تعديل العنوان",
+    "remove_tracking": "إزالة التتبع",
+    "not_available": "غير متوفر"
+  },
+  "attribute": {
+    "order_number": "رقم الطلب",
+    "status": "الحالة",
+    "last_update_time": "وقت آخر تحديث",
+    "last_update_status": "آخر حالة تحديث",
+    "progressStatus": "حالة التقدم",
+    "carrier": "شركة الشحن",
+    "carrier_url": "رابط شركة الشحن",
+    "daysNumber": "أيام منذ الشحن",
+    "orignal_track_ids": "معرف التتبع",
+    "order_url": "رابط الطلب",
+    "originCountry": "بلد المنشأ",
+    "destCountry": "بلد الوجهة"
+  },
+  "editor": {
+    "card_title": "عنوان البطاقة",
+    "hide_add_tracking": "إخفاء قسم 'إضافة تتبع'",
+    "exclude_attributes": "استبعاد السمات (حدد للإخفاء)",
+    "attribute_label": "السمة: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "طبيعي",
+    "ABNORMAL": "غير طبيعي",
+    "UNKNOWN": "غير معروف"
+  }
+}

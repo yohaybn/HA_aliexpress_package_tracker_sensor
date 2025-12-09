@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "速卖通包裹",
+    "no_packages": "未找到跟踪的包裹。",
+    "enter_tracking_number": "输入跟踪号",
+    "add_tracking": "添加跟踪",
+    "edit_title": "编辑标题",
+    "remove_tracking": "移除跟踪",
+    "not_available": "不可用"
+  },
+  "attribute": {
+    "order_number": "订单号",
+    "status": "状态",
+    "last_update_time": "最后更新时间",
+    "last_update_status": "最后更新状态",
+    "progressStatus": "进度状态",
+    "carrier": "承运商",
+    "carrier_url": "承运商网址",
+    "daysNumber": "已发货天数",
+    "orignal_track_ids": "跟踪ID",
+    "order_url": "订单网址",
+    "originCountry": "始发国",
+    "destCountry": "目的地国"
+  },
+  "editor": {
+    "card_title": "卡片标题",
+    "hide_add_tracking": "隐藏“添加跟踪”部分",
+    "exclude_attributes": "排除属性（选择以隐藏）",
+    "attribute_label": "属性: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "正常",
+    "ABNORMAL": "异常",
+    "UNKNOWN": "未知"
+  }
+}

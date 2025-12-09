@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "AliExpress zásilky",
+    "no_packages": "Nebyly nalezeny žádné zásilky ke sledování.",
+    "enter_tracking_number": "Vložit sledovací číslo",
+    "add_tracking": "Přidat sledování",
+    "edit_title": "Upravit název",
+    "remove_tracking": "Odstranit sledování",
+    "not_available": "Není k dispozici"
+  },
+  "attribute": {
+    "order_number": "Sledovací číslo",
+    "last_update_time": "Naposledy aktualizováno",
+    "status": "Celkový status",
+    "last_update_status": "Detail poslední události",
+    "progressStatus": "Stav postupu",
+    "carrier": "Dopravce",
+    "carrier_url": "Odkaz na dopravce",
+    "daysNumber": "Dny od odeslání",
+    "orignal_track_ids": "Sledovací ID",
+    "order_url": "URL objednávky",
+    "originCountry": "Země původu",
+    "destCountry": "Cílová země"
+  },
+  "editor": {
+    "card_title": "Název karty",
+    "hide_add_tracking": "Schovat sekci 'Přidat sledování'",
+    "exclude_attributes": "Vyloučit atributy (vyber pro skrytí)",
+    "attribute_label": "Atributy: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normální",
+    "ABNORMAL": "Abnormální",
+    "UNKNOWN": "Neznámý"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "AliExpress पैकेज",
+    "no_packages": "कोई ट्रैक किए गए पैकेज नहीं मिले।",
+    "enter_tracking_number": "ट्रैकिंग नंबर दर्ज करें",
+    "add_tracking": "ट्रैकिंग जोड़ें",
+    "edit_title": "शीर्षक संपादित करें",
+    "remove_tracking": "ट्रैकिंग हटाएं",
+    "not_available": "N/A"
+  },
+  "attribute": {
+    "order_number": "ऑर्डर नंबर",
+    "status": "स्थिति",
+    "last_update_time": "अंतिम अपडेट समय",
+    "last_update_status": "अंतिम अपडेट स्थिति",
+    "progressStatus": "प्रगति स्थिति",
+    "carrier": "वाहक",
+    "carrier_url": "वाहक URL",
+    "daysNumber": "शिपमेंट के बाद के दिन",
+    "orignal_track_ids": "ट्रैकिंग आईडी",
+    "order_url": "ऑर्डर URL",
+    "originCountry": "मूल देश",
+    "destCountry": "गंतव्य देश"
+  },
+  "editor": {
+    "card_title": "कार्ड शीर्षक",
+    "hide_add_tracking": "'ट्रैकिंग जोड़ें' अनुभाग छिपाएं",
+    "exclude_attributes": "विशेषताएँ बहिष्कृत करें (छिपाने के लिए चुनें)",
+    "attribute_label": "विशेषता: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "सामान्य",
+    "ABNORMAL": "असामान्य",
+    "UNKNOWN": "अज्ञात"
+  }
+}

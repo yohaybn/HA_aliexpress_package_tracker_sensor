@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "Colis AliExpress",
+    "no_packages": "Aucun colis suivi trouvé.",
+    "enter_tracking_number": "Entrez le numéro de suivi",
+    "add_tracking": "Ajouter un suivi",
+    "edit_title": "Modifier le Titre",
+    "remove_tracking": "Supprimer le suivi",
+    "not_available": "N/A"
+  },
+  "attribute": {
+    "order_number": "Numéro de Commande",
+    "status": "Statut",
+    "last_update_time": "Dernière Mise à Jour",
+    "last_update_status": "Dernier Statut",
+    "progressStatus": "État d'Avancement",
+    "carrier": "Transporteur",
+    "carrier_url": "URL Transporteur",
+    "daysNumber": "Jours Depuis Expédition",
+    "orignal_track_ids": "ID de Suivi",
+    "order_url": "URL de Commande",
+    "originCountry": "Pays d'Origine",
+    "destCountry": "Pays de Destination"
+  },
+  "editor": {
+    "card_title": "Titre de la Carte",
+    "hide_add_tracking": "Masquer la Section 'Ajouter un suivi'",
+    "exclude_attributes": "Exclure des Attributs (Sélectionner pour masquer)",
+    "attribute_label": "Attribut : {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normal",
+    "ABNORMAL": "Anormal",
+    "UNKNOWN": "Inconnu"
+  }
+}
