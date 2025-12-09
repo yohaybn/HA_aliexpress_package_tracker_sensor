@@ -1,7 +1,11 @@
 """The aliexpress_package_tracker component."""
 
 import aiohttp
+import json
 import logging
+import os
+import shutil
+from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -9,6 +13,8 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.components.http import StaticPathConfig
+from homeassistant.components.lovelace.resources import ResourceStorageCollection
 
 from .const import (
     CONF_LANG,
@@ -27,9 +33,147 @@ from .helpers import (
     get_store,
 )
 
-PLATFORMS: list[str] = ["sensor", "event"] 
+PLATFORMS: list[str] = ["sensor"]
 
 _LOGGER = logging.getLogger(__name__)
+
+
+async def init_lovelace_resource(hass: HomeAssistant, url: str, version: str) -> bool:
+    """Add/update lovelace resource with proper version handling.
+
+    Based on the approach used by ha-simple-timer integration.
+    """
+    try:
+        resources: ResourceStorageCollection = hass.data["lovelace"].resources
+        await resources.async_get_info()
+        url_with_version = f"{url}?v={version}"
+        for item in resources.async_items():
+            if not item.get("url", "").startswith(url):
+                continue
+
+            if item["url"].endswith(version):
+                _LOGGER.info(
+                    "✅ Aliexpress-package-tracker resource already at version %s",
+                    version,
+                )
+                return False
+
+            # Update to new version
+            _LOGGER.info(
+                "🔄 Updating Aliexpress-package-tracker resource from %s to %s",
+                item["url"],
+                url_with_version,
+            )
+            await resources.async_update_item(
+                item["id"], {"res_type": "module", "url": url_with_version}
+            )
+            return True
+
+        # Create new resource
+        _LOGGER.info(
+            "✅ Creating new Aliexpress-package-tracker resource: %s", url_with_version
+        )
+        await resources.async_create_item(
+            {"res_type": "module", "url": url_with_version}
+        )
+        return True
+
+    except Exception as err:
+        _LOGGER.error("❌ Failed to register lovelace resource: %s", err)
+        return False
+
+
+async def _async_install_card(hass: HomeAssistant) -> None:
+    """Install the card automatically."""
+    try:
+        # Get the integration path
+        integration_path = Path(__file__).parent
+
+        # Get version from manifest
+        manifest_path = integration_path / "manifest.json"
+        version = "1.0.0"
+        try:
+            with open(manifest_path) as f:
+                manifest = json.load(f)
+                version = manifest.get("version", "1.0.0")
+        except Exception as err:
+            _LOGGER.warning("Could not read version from manifest: %s", err)
+
+        # Source files
+        card_js_source = integration_path / "dist"
+
+        # Destination directory
+        www_dir = Path(hass.config.path("www"))
+        card_dir = www_dir / "lovelace-aliexpress-package-card"
+
+        # Create directory if it doesn't exist
+        card_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy files if they exist
+        if card_js_source.exists():
+            shutil.copytree(card_js_source, card_dir, dirs_exist_ok=True)
+            _LOGGER.info(
+                "Aliexpress-package-trackerCard installed to www/lovelace-aliexpress-package-card/"
+            )
+        else:
+            _LOGGER.warning(
+                "Aliexpress-package-tracker Card source file not found at %s. "
+                "You may need to build the card first.",
+                card_js_source,
+            )
+
+        _LOGGER.info(
+            "✅ Aliexpress-package-tracker Card v%s files installed successfully to www/lovelace-aliexpress-package-card/",
+            version,
+        )
+
+    except Exception as err:
+        _LOGGER.error("Failed to install Aliexpress-package-tracker Card: %s", err)
+
+
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Set up the Aliexpress-package-tracker component."""
+    hass.data.setdefault(DOMAIN, {})
+
+    # Install card files automatically
+    await _async_install_card(hass)
+
+    # Register static path for the card
+    await hass.http.async_register_static_paths(
+        [
+            StaticPathConfig(
+                "/local/lovelace-aliexpress-package-card/aliexpress_package_card.js",
+                hass.config.path(
+                    "www/lovelace-aliexpress-package-card/aliexpress_package_card.js"
+                ),
+                True,
+            )
+        ]
+    )
+
+    # Get version from manifest
+    integration_path = Path(__file__).parent
+    manifest_path = integration_path / "manifest.json"
+    version = "1.0.0"
+    try:
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+            version = manifest.get("version", "1.0.0")
+    except Exception as err:
+        _LOGGER.warning("Could not read version from manifest: %s", err)
+
+    # Register lovelace resource
+    _LOGGER.info(
+        "🔵 Aliexpress-package-tracker: Registering lovelace resource (version %s)",
+        version,
+    )
+    await init_lovelace_resource(
+        hass,
+        "/local/lovelace-aliexpress-package-card/aliexpress_package_card.js",
+        version,
+    )
+
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
@@ -203,16 +347,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     await coordinator.async_config_entry_first_refresh()
 
     # Setup sensors
-    await hass.config_entries.async_forward_entry_setups(entry,PLATFORMS )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     # Reload listener
     entry.async_on_unload(entry.add_update_listener(update_listener))
 
-    return True
-
-
-async def async_setup(hass: HomeAssistant, config: ConfigType):
-    """Set up the component (nothing to do here as it's config entry based)."""
     return True
 
 
@@ -235,4 +374,3 @@ async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
     _LOGGER.debug("Reloading entry due to update listener: %s", entry.entry_id)
     await hass.config_entries.async_reload(entry.entry_id)
-
