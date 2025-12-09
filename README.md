@@ -1,7 +1,8 @@
   
 
 # HA_aliexpress_package_tracker_sensor
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default%20Repository-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.aliexpress_package_tracker.total)](https://github.com/hacs/integration)
 
 This Home Assistant custom component provides sensor entities to track your packages from AliExpress using Cainiao Global tracking. It allows you to add and remove tracking numbers via Home Assistant services and provides detailed package status information.
 
