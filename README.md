@@ -5,6 +5,7 @@
 
 This Home Assistant custom component provides sensor entities to track your packages from AliExpress using Cainiao Global tracking. It allows you to add and remove tracking numbers via Home Assistant services and provides detailed package status information.
 
+**This integration now includes the Custom Lovelace Card automatically!**
 ## Features
 
 -   **Tracking Package Status:** Displays the current status of your AliExpress packages.
@@ -17,12 +18,21 @@ This Home Assistant custom component provides sensor entities to track your pack
 -   **Real Tracking Number Extraction:** Extracts the real tracking number from Cainiao data.
 -   **Order URL Generation:** Generates direct order URLs from tracking data if exists.
 -   **Event Firing:** Fires a custom event (`aliexpress_package_data_updated`) on state changes.
+-   **Built-in Lovelace Card**: Includes a beautiful custom card to display your packages without extra installation.
+
+## Donate
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/yohaybn)
+
+If you find it helpful or interesting, consider supporting me by buying me a coffee or starring the project on GitHub! ☕⭐
+Your support helps me improve and maintain this project while keeping me motivated. Thank you! ❤️
 
 ## Installation
 
 1.  **HACS (Recommended):**
-    -   Add this repository as a custom repository in HACS.
-    -   Install the "AliExpress Package Tracker" integration.
+    
+    -   Install the "AliExpress Package Tracker" integration from HACS.
+    -   Restart Home Assistant.
+
 2.  **Manual Installation:**
     -   Copy the `custom_components/aliexpress_package_tracker` directory into your Home Assistant `custom_components` directory.
     -   Restart Home Assistant.
@@ -32,6 +42,8 @@ This Home Assistant custom component provides sensor entities to track your pack
 1.  Go to **Settings** -> **Devices & Services**.
 2.  Click **Add Integration** and search for "AliExpress Package Tracker".
 3.  Follow the configuration steps.
+
+
 
 ## Services
 
@@ -106,21 +118,39 @@ data:
 
 ```
 
-## Lovelace Example
+## Lovelace Card
 
-**Recommended: Use the dedicated AliExpress Package Card for an enhanced experience!**
-
-For a more visually appealing and feature-rich display of your AliExpress package tracking information, consider using the dedicated Lovelace card: [lovelace-aliexpress-package-card](https://github.com/yohaybn/lovelace-aliexpress-package-card)
+**Note:** You **do not** need to install the `lovelace-aliexpress-package-card` separately. It is now automatically installed and registered when you install this integration!
+```yaml
+type: custom:aliexpress-package-card
+# Optional Configuration
+title: AliExpress Packages  # Custom title for the card
+hide_add_tracking: false    # Set to true to hide the 'Add Tracking' input field
+exclude_attributes:       # Optional: List of attributes to hide from the card
+#   - order_number
+#   - status
+#   - last_update_time
+#   - last_update_status
+#   - progressStatus
+#   - carrier
+#   - carrier_url
+#   - daysNumber
+#   - orignal_track_id
+#   - order_url
+```
 
 ![AliExpress Package Card](https://github.com/yohaybn/lovelace-aliexpress-package-card/blob/main/images/screenshot_light.png)
 ![AliExpress Package Card](https://github.com/yohaybn/lovelace-aliexpress-package-card/blob/main/images/screenshot_dark.png)
 
- 
 
+### Credits
+
+Special thanks to the following projects for the method used to automatically register the Lovelace card resources without requiring manual installation:
+*   [ArikShemesh/ha-simple-timer](https://github.com/ArikShemesh/ha-simple-timer)
+*   [davidss20/home-assistant-24h-timer-integration](https://github.com/davidss20/home-assistant-24h-timer-integration)
+
+  
 **Alternatively, create a Markdown card using the following code:**
-
-
-
 ```Markdown
 type: markdown
 content: >-
@@ -239,9 +269,66 @@ This automation sends a notification to your mobile app when any AliExpress pack
 
 Feel free to contribute to this project by submitting pull requests or reporting issues.
 
+## 🌍 Localization / Translations
 
-### Donate
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/yohaybn)
+This card supports displaying text in multiple languages using translation files located in the translations/ directory.
 
-If you find it helpful or interesting, consider supporting me by buying me a coffee or starring the project on GitHub! ☕⭐
-Your support helps me improve and maintain this project while keeping me motivated. Thank you! ❤️
+**How it Works:**
+
+-   Each supported language has a JSON file (e.g., en.json, es.json).
+    
+-   The card uses English (en.json) as the default and fallback language. If a translation is missing in your selected language, it will display the English text instead.
+    
+-   An index.json file lists the available languages for selection in the card's editor.
+    
+
+**🙏 Help Improve Translations!**
+
+The current non-English translations were generated using AI and **may contain errors or sound unnatural**. We rely on the community to improve them!
+
+**How to Contribute:**
+
+1.  **Find the translations/ folder** in the [card's source directory](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/dist).
+    
+2.  **Copy en.json** and **rename** it using the [ISO 639-1 code](https://www.google.com/url?sa=E&q=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FList_of_ISO_639-1_codes) for your language (e.g., pt.json for Portuguese).
+    
+3.  **Translate** the **string values** (text after the colons) in your new file. **Do not change the keys** (text before colons). Use a UTF-8 compatible editor.
+    
+4.  **Add your language** to translations/index.json, following the existing format (e.g., { "code": "pt", "name": "Português" }).
+    
+5.  **Submit** your changes via a Pull Request or GitHub Issue on the card's repository.
+    
+
+Your contributions help make this card better for everyone!
+
+## 🚚 Carrier Logos
+
+This card displays carrier logos for easier visual identification.
+
+**How it Works:**
+-   Logos are mapped from carrier names to image URLs in the `carrier_logos.json` file.  
+-   If a logo isn't in the file, the card attempts to use the carrier's website favicon as a fallback (requires carrier_url attribute).
+    
+
+**🙏 Help Expand Logo Coverage!**
+The included logo list might be incomplete. Adding logos for more carriers benefits everyone.
+**How to Contribute:**
+1.  **Find** a public URL for the missing carrier's logo.
+2.  **Add** an entry to carrier_logos.json, mapping the exact carrier name (from attributes) to the logo URL. 
+    ```
+    // carrier_logos.json - Example Addition
+    {
+      // ... existing logos ...
+      "Specific Carrier Name": "https://carrier.com/logo.png"
+    }
+    ```
+    
+3.  **Submit** your additions via a Pull Request or GitHub Issue on this repository.
+    
+Your contributions make the card more visually helpful!
+
+If you have added custom carrier logos that you think would benefit other users, feel free to contribute them to the repository! Submit a pull request with your additions to the  `carrier_logos.json`  file. This helps improve the card for everyone.
+
+
+
+
