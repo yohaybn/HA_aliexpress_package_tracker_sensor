@@ -1,6 +1,7 @@
 {
   "domain": "aliexpress_package_tracker",
   "name": "Aliexpress Package Tracker",
+  "after_dependencies": ["lovelace","http"],
   "codeowners": ["@yohaybn"],
   "config_flow": true,
   "documentation": "https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor",
