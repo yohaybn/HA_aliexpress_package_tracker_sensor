@@ -115,17 +115,21 @@ async def async_setup_entry(
         made_changes = False
         loaded_data = await store.async_load() or {}
 
+        lower_to_actual = {key.lower(): key for key in loaded_data}
+
         if tracking_number_to_remove:
             cleaned_number = _clean_tracking_number(tracking_number_to_remove)
-            if cleaned_number in loaded_data:
-                del loaded_data[cleaned_number]
+            actual_key = lower_to_actual.get(cleaned_number.lower())
+            if actual_key:
+                del loaded_data[actual_key]
                 made_changes = True
-                remove_entity_from_registry(hass, f"sensor.aliexpress_package_no_{cleaned_number.lower()}")
+                remove_entity_from_registry(hass, f"sensor.aliexpress_package_no_{actual_key.lower()}")
         elif entity_ids_to_remove:
             for entity_id in entity_ids_to_remove:
                 number_from_entity = entity_id.split("aliexpress_package_no_")[-1].lower()
-                if number_from_entity in loaded_data:
-                    del loaded_data[number_from_entity]
+                actual_key = lower_to_actual.get(number_from_entity)
+                if actual_key:
+                    del loaded_data[actual_key]
                     made_changes = True
                     remove_entity_from_registry(hass, entity_id)
 
@@ -142,10 +146,14 @@ async def async_setup_entry(
         loaded_data = await store.async_load() or {}
         made_changes = False
 
+        # Create a case-insensitive lookup map for stored tracking numbers
+        lower_to_actual = {key.lower(): key for key in loaded_data}
+
         for entity_id in entity_ids:
             order_number = entity_id.split("aliexpress_package_no_")[-1].lower()
-            if order_number in loaded_data:
-                loaded_data[order_number][CONF_TITLE] = new_title
+            actual_key = lower_to_actual.get(order_number)
+            if actual_key:
+                loaded_data[actual_key][CONF_TITLE] = new_title
                 made_changes = True
         if made_changes:
             await store.async_save(loaded_data)
