@@ -117,6 +117,21 @@ async def async_setup_entry(
 
         lower_to_actual = {key.lower(): key for key in loaded_data}
 
+        def _resolve_actual_key_from_entity_id(entity_id: str) -> str | None:
+            state = hass.states.get(entity_id)
+            if state:
+                order_number = state.attributes.get("order_number")
+                if order_number:
+                    cleaned = _clean_tracking_number(str(order_number)).lower()
+                    actual = lower_to_actual.get(cleaned)
+                    if actual:
+                        return actual
+
+            parsed = entity_id.split("aliexpress_package_no_")[-1].lower()
+            if parsed == entity_id.lower() and "aliexpress_order_" in entity_id.lower():
+                parsed = entity_id.lower().split("aliexpress_order_")[-1]
+            return lower_to_actual.get(parsed)
+
         if tracking_number_to_remove:
             cleaned_number = _clean_tracking_number(tracking_number_to_remove)
             actual_key = lower_to_actual.get(cleaned_number.lower())
@@ -125,9 +140,10 @@ async def async_setup_entry(
                 made_changes = True
                 remove_entity_from_registry(hass, f"sensor.aliexpress_package_no_{actual_key.lower()}")
         elif entity_ids_to_remove:
+            if isinstance(entity_ids_to_remove, str):
+                entity_ids_to_remove = [entity_ids_to_remove]
             for entity_id in entity_ids_to_remove:
-                number_from_entity = entity_id.split("aliexpress_package_no_")[-1].lower()
-                actual_key = lower_to_actual.get(number_from_entity)
+                actual_key = _resolve_actual_key_from_entity_id(entity_id)
                 if actual_key:
                     del loaded_data[actual_key]
                     made_changes = True
@@ -143,6 +159,8 @@ async def async_setup_entry(
         if not entity_ids or not new_title:
             _LOGGER.error("Service 'edit_title' missing parameters")
             return
+        if isinstance(entity_ids, str):
+            entity_ids = [entity_ids]
         loaded_data = await store.async_load() or {}
         made_changes = False
 
@@ -150,7 +168,18 @@ async def async_setup_entry(
         lower_to_actual = {key.lower(): key for key in loaded_data}
 
         for entity_id in entity_ids:
-            order_number = entity_id.split("aliexpress_package_no_")[-1].lower()
+            state = hass.states.get(entity_id)
+            if state and state.attributes.get("order_number"):
+                order_number = _clean_tracking_number(
+                    str(state.attributes.get("order_number"))
+                ).lower()
+            else:
+                order_number = entity_id.split("aliexpress_package_no_")[-1].lower()
+                if (
+                    order_number == entity_id.lower()
+                    and "aliexpress_order_" in entity_id.lower()
+                ):
+                    order_number = entity_id.lower().split("aliexpress_order_")[-1]
             actual_key = lower_to_actual.get(order_number)
             if actual_key:
                 loaded_data[actual_key][CONF_TITLE] = new_title
