@@ -38,6 +38,23 @@ PLATFORMS: list[str] = ["sensor"]
 _LOGGER = logging.getLogger(__name__)
 
 
+def _read_manifest_version(manifest_path: Path) -> str:
+    """Read integration version from manifest file (sync helper)."""
+    with open(manifest_path, encoding="utf-8") as file:
+        manifest = json.load(file)
+    return manifest.get("version", "1.0.0")
+
+
+def _install_card_files(card_js_source: Path, card_dir: Path) -> bool:
+    """Copy card dist files to www directory (sync helper)."""
+    card_dir.mkdir(parents=True, exist_ok=True)
+    if not card_js_source.exists():
+        return False
+
+    shutil.copytree(card_js_source, card_dir, dirs_exist_ok=True)
+    return True
+
+
 async def init_lovelace_resource(hass: HomeAssistant, url: str, version: str) -> bool:
     """Add/update lovelace resource with proper version handling.
 
@@ -93,9 +110,9 @@ async def _async_install_card(hass: HomeAssistant) -> None:
         manifest_path = integration_path / "manifest.json"
         version = "1.0.0"
         try:
-            with open(manifest_path) as f:
-                manifest = json.load(f)
-                version = manifest.get("version", "1.0.0")
+            version = await hass.async_add_executor_job(
+                _read_manifest_version, manifest_path
+            )
         except Exception as err:
             _LOGGER.warning("Could not read version from manifest: %s", err)
 
@@ -106,12 +123,11 @@ async def _async_install_card(hass: HomeAssistant) -> None:
         www_dir = Path(hass.config.path("www"))
         card_dir = www_dir / "lovelace-aliexpress-package-card"
 
-        # Create directory if it doesn't exist
-        card_dir.mkdir(parents=True, exist_ok=True)
-
-        # Copy files if they exist
-        if card_js_source.exists():
-            shutil.copytree(card_js_source, card_dir, dirs_exist_ok=True)
+        # Copy files in executor to avoid blocking the event loop
+        copied = await hass.async_add_executor_job(
+            _install_card_files, card_js_source, card_dir
+        )
+        if copied:
             _LOGGER.info(
                 "Aliexpress-package-trackerCard installed to www/lovelace-aliexpress-package-card/"
             )
@@ -156,9 +172,9 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     manifest_path = integration_path / "manifest.json"
     version = "1.0.0"
     try:
-        with open(manifest_path) as f:
-            manifest = json.load(f)
-            version = manifest.get("version", "1.0.0")
+        version = await hass.async_add_executor_job(
+            _read_manifest_version, manifest_path
+        )
     except Exception as err:
         _LOGGER.warning("Could not read version from manifest: %s", err)
 
