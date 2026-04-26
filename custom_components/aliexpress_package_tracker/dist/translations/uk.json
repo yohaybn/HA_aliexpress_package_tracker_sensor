@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "Посилки AliExpress",
+    "no_packages": "Відстежуваних посилок не знайдено.",
+    "enter_tracking_number": "Введіть трек-номер",
+    "add_tracking": "Додати відстеження",
+    "edit_title": "Редагувати назву",
+    "remove_tracking": "Видалити відстеження",
+    "not_available": "Н/Д"
+  },
+  "attribute": {
+    "order_number": "Трек-номер",
+    "last_update_time": "Час останнього оновлення",
+    "status": "Загальний статус",
+    "last_update_status": "Остання подія",
+    "progressStatus": "Статус доставки",
+    "carrier": "Перевізник",
+    "carrier_url": "Посилання на перевізника",
+    "daysNumber": "Днів з моменту відправлення",
+    "orignal_track_ids": "Трек-ідентифікатор",
+    "order_url": "Посилання на замовлення",
+    "originCountry": "Країна відправлення",
+    "destCountry": "Країна призначення"
+  },
+  "editor": {
+    "card_title": "Назва картки",
+    "hide_add_tracking": "Приховати розділ «Додати відстеження»",
+    "exclude_attributes": "Приховати атрибути (оберіть для приховування)",
+    "attribute_label": "Атрибут: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Нормально",
+    "ABNORMAL": "Проблема",
+    "UNKNOWN": "Невідомо"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Налаштування AliExpress Tracker",
+        "description": "⚠️ Параметр «Кількість днів до авто-видалення» ігнорується, якщо авто-видалення вимкнено.",
+        "data": {
+          "language": "Бажана мова",
+          "AUTO_DELETE": "Автоматично видаляти через X днів, коли статус «Доставлено»",
+          "AUTO_DELETE_DAYS": "Кількість днів до видалення"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Ця інтеграція вже налаштована."
+    },
+    "abort": {
+      "already_configured": "Інтеграція AliExpress Tracker вже налаштована."
+    },
+    "create_entry": {
+      "default": "AliExpress Tracker успішно налаштовано."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Налаштування AliExpress Tracker",
+        "description": "⚠️ Параметр «Кількість днів до авто-видалення» ігнорується, якщо авто-видалення вимкнено.",
+        "data": {
+          "language": "Бажана мова",
+          "AUTO_DELETE": "Автоматично видаляти через X днів, коли статус «Доставлено»",
+          "AUTO_DELETE_DAYS": "Кількість днів до видалення"
+        }
+      }
+    }
+  },
+  "services": {
+    "add_tracking": {
+      "name": "Додати відстеження",
+      "description": "Додати новий трек-номер у трекер посилок AliExpress.",
+      "fields": {
+        "tracking_number": {
+          "name": "Трек-номер",
+          "description": "Трек-номер нової посилки.",
+          "example": "123456789"
+        },
+        "title": {
+          "name": "Назва",
+          "description": "Користувацька назва для нового відстеження.",
+          "example": "Ноутбук"
+        }
+      }
+    },
+    "remove_tracking": {
+      "name": "Видалити відстеження",
+      "description": "Видалити трек-номер з трекера посилок AliExpress.",
+      "fields": {
+        "tracking_number": {
+          "name": "Трек-номер",
+          "description": "Трек-номер для видалення.",
+          "example": "123456789"
+        }
+      }
+    },
+    "edit_title": {
+      "name": "Редагувати назву",
+      "description": "Змінити назву (атрибут title) для конкретної сутності відстеження AliExpress.",
+      "fields": {
+        "entity_id": {
+          "name": "ID сутності",
+          "description": "ID сутності сенсора відстеження AliExpress, який потрібно оновити."
+        },
+        "new_title": {
+          "name": "Нова назва",
+          "description": "Нова назва для сутності."
+        }
+      }
+    }
+  },
+  "title": "Трекер посилок AliExpress"
+}
