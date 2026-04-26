@@ -13,7 +13,10 @@ from homeassistant.const import CONF_ENTITY_ID
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.helpers.update_coordinator import CoordinatorEntity, DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+    DataUpdateCoordinator,
+)
 from homeassistant.util import dt as dt_util
 
 from .const import (
@@ -43,7 +46,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Aliexpress package tracker sensor platform."""
-    coordinator: DataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][COORDINATOR]
+    coordinator: DataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
+        COORDINATOR
+    ]
     store = get_store(hass)
 
     hass.data.setdefault(DOMAIN, {})
@@ -99,7 +104,9 @@ async def async_setup_entry(
         tracking_number = _clean_tracking_number(call.data.get(CONF_TRACKING_NUMBER))
         title = call.data.get(CONF_TITLE) or CONF_PACKAGE
         if not tracking_number:
-            _LOGGER.error("Service '%s' failed: Tracking number missing", SERVICE_ADD_TRACKING)
+            _LOGGER.error(
+                "Service '%s' failed: Tracking number missing", SERVICE_ADD_TRACKING
+            )
             return
         loaded_data = await store.async_load() or {}
         loaded_data[tracking_number] = {
@@ -115,21 +122,21 @@ async def async_setup_entry(
         made_changes = False
         loaded_data = await store.async_load() or {}
 
-        lower_to_actual = {key.lower(): key for key in loaded_data}
-
         if tracking_number_to_remove:
             cleaned_number = _clean_tracking_number(tracking_number_to_remove)
-            actual_key = lower_to_actual.get(cleaned_number.lower())
-            if actual_key:
-                del loaded_data[actual_key]
+            if cleaned_number in loaded_data:
+                del loaded_data[cleaned_number]
                 made_changes = True
-                remove_entity_from_registry(hass, f"sensor.aliexpress_package_no_{actual_key.lower()}")
+                remove_entity_from_registry(
+                    hass, f"sensor.aliexpress_package_no_{cleaned_number.lower()}"
+                )
         elif entity_ids_to_remove:
             for entity_id in entity_ids_to_remove:
-                number_from_entity = entity_id.split("aliexpress_package_no_")[-1].lower()
-                actual_key = lower_to_actual.get(number_from_entity)
-                if actual_key:
-                    del loaded_data[actual_key]
+                number_from_entity = entity_id.split("aliexpress_package_no_")[
+                    -1
+                ].upper()
+                if number_from_entity in loaded_data:
+                    del loaded_data[number_from_entity]
                     made_changes = True
                     remove_entity_from_registry(hass, entity_id)
 
@@ -146,22 +153,30 @@ async def async_setup_entry(
         loaded_data = await store.async_load() or {}
         made_changes = False
 
-        # Create a case-insensitive lookup map for stored tracking numbers
-        lower_to_actual = {key.lower(): key for key in loaded_data}
-
         for entity_id in entity_ids:
-            order_number = entity_id.split("aliexpress_package_no_")[-1].lower()
-            actual_key = lower_to_actual.get(order_number)
-            if actual_key:
-                loaded_data[actual_key][CONF_TITLE] = new_title
+            order_number = entity_id.split("aliexpress_package_no_")[-1].upper()
+            if order_number in loaded_data:
+                loaded_data[order_number][CONF_TITLE] = new_title
                 made_changes = True
         if made_changes:
             await store.async_save(loaded_data)
             await coordinator.async_request_refresh()
 
-    hass.services.async_register(DOMAIN, SERVICE_ADD_TRACKING, handle_add_tracking, schema=ADD_TRACKING_SERVICE_SCHEMA)
-    hass.services.async_register(DOMAIN, SERVICE_REMOVE_TRACKING, handle_remove_tracking, schema=REMOVE_TRACKING_SERVICE_SCHEMA)
-    hass.services.async_register(DOMAIN, "edit_title", handle_edit_title, schema=EDIT_TITLE_SERVICE_SCHEMA)
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_ADD_TRACKING,
+        handle_add_tracking,
+        schema=ADD_TRACKING_SERVICE_SCHEMA,
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_REMOVE_TRACKING,
+        handle_remove_tracking,
+        schema=REMOVE_TRACKING_SERVICE_SCHEMA,
+    )
+    hass.services.async_register(
+        DOMAIN, "edit_title", handle_edit_title, schema=EDIT_TITLE_SERVICE_SCHEMA
+    )
 
 
 class AliexpressPackageSensor(CoordinatorEntity, SensorEntity):
@@ -208,9 +223,13 @@ class AliexpressPackageSensor(CoordinatorEntity, SensorEntity):
             "order_number": self._order_number,
             "status": api_data.get("statusDesc", "Unknown"),
             "status_english": api_data.get("status", "Unknown"),
-            "last_update_status": api_data.get("latestTrace", {}).get("standerdDesc", "Unknown"),
+            "last_update_status": api_data.get("latestTrace", {}).get(
+                "standerdDesc", "Unknown"
+            ),
             "carrier": api_data.get("destCpInfo", {}).get("cpName"),
-            "last_update_time": self._parse_timestamp(api_data.get("latestTrace", {}).get("time")),
+            "last_update_time": self._parse_timestamp(
+                api_data.get("latestTrace", {}).get("time")
+            ),
         }
         self._attr_available = bool(data)
 
@@ -229,7 +248,11 @@ class AliexpressPackageSensor(CoordinatorEntity, SensorEntity):
             return False
         status = self.extra_state_attributes.get("status_english")
         last_update = self.extra_state_attributes.get("last_update_time")
-        if status and "delivered" in status.lower() and isinstance(last_update, datetime):
+        if (
+            status
+            and "delivered" in status.lower()
+            and isinstance(last_update, datetime)
+        ):
             days_threshold = self._config_data.get(CONF_AUTO_DELETE_DAYS, 30)
             if (dt_util.utcnow() - last_update) > timedelta(days=days_threshold):
                 return True
