@@ -205,10 +205,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             _LOGGER.warning(
                 "Received no or invalid data from Cainiao API for %s", order_numbers
             )
-            # Return last known good data structure if possible, or empty
-            # For simplicity, we return empty here, sensors will become unavailable
-            # A more robust approach might keep old data but mark it stale.
-            return {}
+            raise UpdateFailed("Received no or invalid data from Cainiao API")
 
         processed_data = {}
         potentially_merged_track_ids = set()
@@ -324,6 +321,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
             if made_changes:
                 await store.async_save(stored_data)
+
+        # Ensure all tracked items remain in processed_data so sensors don't get deleted
+        for track_id, track_info in stored_data.items():
+            if track_id not in processed_data:
+                processed_data[track_id] = {
+                    "api_data": {},
+                    CONF_TITLE: track_info.get(CONF_TITLE, CONF_PACKAGE),
+                    "original_tracking_numbers": track_info.get(CONF_TRACKING_NUMBER, track_id),
+                }
 
         _LOGGER.debug(
             "Coordinator update finished, processed data: %s", processed_data.keys()
