@@ -289,7 +289,7 @@ The current non-English translations were generated using AI and **may contain e
 
 **How to Contribute:**
 
-1.  **Find the translations/ folder** in the [card's source directory](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/dist) and the [component itself](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/).
+1.  **Find the translations/ folder** in the [card's source directory](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/dist) and the [directory of the component itself](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/).
     
 2.  **Copy en.json** and **rename** it using the [ISO 639-1 code](https://www.google.com/url?sa=E&q=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FList_of_ISO_639-1_codes) for your language (e.g., pt.json for Portuguese).
     
