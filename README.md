@@ -276,7 +276,7 @@ This card supports displaying text in multiple languages using translation files
 
 **How it Works:**
 
--   Each supported language has a JSON file (e.g., en.json, es.json).
+-   Each supported language has two JSON files (e.g., en.json, es.json). One for the lovelace card and one for the component itself. 
     
 -   The card uses English (en.json) as the default and fallback language. If a translation is missing in your selected language, it will display the English text instead.
     
@@ -289,11 +289,11 @@ The current non-English translations were generated using AI and **may contain e
 
 **How to Contribute:**
 
-1.  **Find the translations/ folder** in the [card's source directory](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/dist).
+1.  **Find the translations/ folder** in the [card's source directory](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/dist) and the [component itself](https://github.com/yohaybn/HA_aliexpress_package_tracker_sensor/tree/main/custom_components/aliexpress_package_tracker/).
     
 2.  **Copy en.json** and **rename** it using the [ISO 639-1 code](https://www.google.com/url?sa=E&q=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FList_of_ISO_639-1_codes) for your language (e.g., pt.json for Portuguese).
     
-3.  **Translate** the **string values** (text after the colons) in your new file. **Do not change the keys** (text before colons). Use a UTF-8 compatible editor.
+3.  **Translate** the **string values** (text after the colons) in your new files. **Do not change the keys** (text before colons). Use a UTF-8 compatible editor.
     
 4.  **Add your language** to translations/index.json, following the existing format (e.g., { "code": "pt", "name": "Português" }).
     
