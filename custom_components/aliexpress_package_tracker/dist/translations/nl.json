@@ -1,0 +1,36 @@
+{
+  "common": {
+    "default_title": "AliExpress pakket",
+    "no_packages": "Geen traceerbare pakketten gevonden",
+    "enter_tracking_number": "Vul de tracking-code in",
+    "add_tracking": "Pakket toevoegen",
+    "edit_title": "Titel bewerken",
+    "remove_tracking": "Pakket verwijderen",
+    "not_available": "Niet beschikbaar"
+  },
+  "attribute": {
+    "order_number": "Tracking code",
+    "last_update_time": "Tijdstip laatste update",
+    "status": "Algehele status",
+    "last_update_status": "Detail laatste update",
+    "progressStatus": "Voortgangsstatus",
+    "carrier": "Vervoerder",
+    "carrier_url": "URL vervoerder",
+    "daysNumber": "Aantal dagen onderweg",
+    "orignal_track_ids": "Tracking-ID",
+    "order_url": "URL bestelling",
+    "originCountry": "Land van oorsprong",
+    "destCountry": "Land van bestemming"
+  },
+  "editor": {
+    "card_title": "Kaart-titel",
+    "hide_add_tracking": "Verberg de sectie 'Pakket toevoegen'",
+    "exclude_attributes": "Attributen verbergen (selecteer om te verbergen)",
+    "attribute_label": "Attribuut: {attribute_name}"
+  },
+  "status_value": {
+    "NORMAL": "Normaal",
+    "ABNORMAL": "Niet normaal",
+    "UNKNOWN": "Onbekend"
+  }
+}

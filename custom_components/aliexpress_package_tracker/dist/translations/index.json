@@ -12,5 +12,6 @@
   { "code": "cs", "name": "Čeština" },
   { "code": "ru", "name": "Русский" },
   { "code": "lt", "name": "Lietuviškai" },
-  {"code": "pl", "name": "Polski" }
+  { "code": "pl", "name": "Polski" }, 
+  { "code": "nl", "name": "Nederlands"}
 ]

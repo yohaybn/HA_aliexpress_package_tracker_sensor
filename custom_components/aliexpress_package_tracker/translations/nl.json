@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "AliExpress Tracker configureren",
+        "description": "⚠️ 'Aantal dagen Auto-delete' wordt genegeerd als 'auto-delete' is uitgeschakeld.",
+        "data": {
+          "language": "Taalvoorkeur",
+          "AUTO_DELETE": "Automatisch verwijderen na X dagen als de status 'bezorgd' is. ",
+          "AUTO_DELETE_DAYS": "Automatisch verwijderen na X dagen"
+        }
+      }
+    },
+    "error": {
+      "already_configured": "Deze integratie is al geconfigureerd."
+    },
+    "abort": {
+      "already_configured": "De AliExpress Tracker integratie is al geconfigureerd."
+    },
+    "create_entry": {
+      "default": "De AliExpress Tracker is succesvol geconfigureerd."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "AliExpress Tracker configureren",
+        "description": "⚠️ 'Aantal dagen Auto-delete' wordt genegeerd als 'auto-delete' is uitgeschakeld.",
+        "data": {
+          "language": "Taalvoorkeur",
+          "AUTO_DELETE": "Automatisch verwijderen na X dagen als de status 'bezorgd' is. ",
+          "AUTO_DELETE_DAYS": "Automatisch verwijderen na X dagen"
+        }
+      }
+    }
+  },
+  "services": {
+    "add_tracking": {
+      "name": "Pakket toevoegen",
+      "description": "Voeg een nieuw pakket toe aan de AliExpress Package Tracker.",
+      "fields": {
+        "tracking_number": {
+          "name": "Tracking-nummer",
+          "description": "Tracking-nummer van het nieuwe pakket.",
+          "example": "123456789"
+        },
+        "title": {
+          "name": "Naam",
+          "description": "Eigen naam voor het pakket",
+          "example": "Laptop"
+        }
+      }
+    },
+    "remove_tracking": {
+      "name": "Tracking verwijderen",
+      "description": "Verwijder een pakket uit de AliExpress Package Tracker.",
+      "fields": {
+        "tracking_number": {
+          "name": "Tracking-nummer",
+          "description": "Tracking-nummer van het te verwijderen pakket.",
+          "example": "123456789"
+        }
+      }
+    },
+    "edit_title": {
+      "name": "Naam aanpassen",
+      "description": "Pas de naam-attribuut aan van een bepaalde AliExpress Tracking entiteit.",
+      "fields": {
+        "entity_id": {
+          "name": "Entiteit ID",
+          "description": "De entiteit ID van de aan te passen AliExpress tracking sensor."
+        },
+        "new_title": {
+          "name": "Nieuwe naam",
+          "description": "De nieuwe naam om in te stellen voor de entiteit."
+        }
+      }
+    }
+  },
+  "title": "AliExpress Package Tracker"
+}
