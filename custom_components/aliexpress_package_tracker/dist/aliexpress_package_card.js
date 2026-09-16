@@ -1,3 +1,5 @@
+import { formatTimeForLocale } from "./date_format.js";
+
 const LitElement = Object.getPrototypeOf(
   customElements.get("ha-panel-lovelace")
 );
@@ -375,12 +377,10 @@ class AliExpressPackageCard extends LitElement {
       if (isNaN(date.getTime())) {
         return timeString;
       }
-      return date.toLocaleString([], {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      return (
+        formatTimeForLocale(date, this.hass?.locale, this.hass?.config) ||
+        notAvailable
+      );
     } catch (e) {
       console.error("Error formatting time:", timeString, e);
       return timeString;
@@ -610,15 +610,19 @@ class AliExpressPackageCard extends LitElement {
   }
 }
 
-customElements.define("aliexpress-package-card", AliExpressPackageCard);
+if (!customElements.get("aliexpress-package-card")) {
+  customElements.define("aliexpress-package-card", AliExpressPackageCard);
+}
 
 window.customCards = window.customCards || [];
-window.customCards.push({
-  type: "aliexpress-package-card",
-  name: "AliExpress Package Card",
-  preview: true,
-  description: "Displays AliExpress packages with file-based translations.",
-});
+if (!window.customCards.some((card) => card.type === "aliexpress-package-card")) {
+  window.customCards.push({
+    type: "aliexpress-package-card",
+    name: "AliExpress Package Card",
+    preview: true,
+    description: "Displays AliExpress packages with file-based translations.",
+  });
+}
 
 class AliExpressPackageCardEditor extends LitElement {
   static properties = {
@@ -840,7 +844,9 @@ class AliExpressPackageCardEditor extends LitElement {
   `;
 }
 
-customElements.define(
-  "aliexpress-package-card-editor",
-  AliExpressPackageCardEditor
-);
+if (!customElements.get("aliexpress-package-card-editor")) {
+  customElements.define(
+    "aliexpress-package-card-editor",
+    AliExpressPackageCardEditor
+  );
+}

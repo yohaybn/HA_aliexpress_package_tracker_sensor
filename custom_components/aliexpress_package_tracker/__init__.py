@@ -68,96 +68,110 @@ async def init_lovelace_resource(hass: HomeAssistant, url: str, version: str) ->
 
         await resources.async_get_info()
         url_with_version = f"{url}?v={version}"
-        for item in resources.async_items():
-            if not item.get("url", "").startswith(url):
-                continue
+        matching_items = [
+            item
+            for item in resources.async_items()
+            if item.get("url", "").split("?", 1)[0] == url
+        ]
 
-            if item["url"].endswith(version):
-                _LOGGER.info(
-                    "✅ Aliexpress-package-tracker resource already at version %s",
-                    version,
-                )
-                return False
-
-            # Update to new version
+        if not matching_items:
             _LOGGER.info(
-                "🔄 Updating Aliexpress-package-tracker resource from %s to %s",
-                item["url"],
+                "✅ Creating new Aliexpress-package-tracker resource: %s",
                 url_with_version,
             )
-            await resources.async_update_item(
-                item["id"], {"res_type": "module", "url": url_with_version}
+            await resources.async_create_item(
+                {"res_type": "module", "url": url_with_version}
             )
             return True
 
-        # Create new resource
-        _LOGGER.info(
-            "✅ Creating new Aliexpress-package-tracker resource: %s", url_with_version
-        )
-        await resources.async_create_item(
-            {"res_type": "module", "url": url_with_version}
-        )
-        return True
+        changed = False
+        primary_item = matching_items[0]
+        if primary_item.get("url") != url_with_version:
+            _LOGGER.info(
+                "🔄 Updating Aliexpress-package-tracker resource from %s to %s",
+                primary_item.get("url"),
+                url_with_version,
+            )
+            await resources.async_update_item(
+                primary_item["id"],
+                {"res_type": "module", "url": url_with_version},
+            )
+            changed = True
+
+        for duplicate_item in matching_items[1:]:
+            _LOGGER.warning(
+                "Removing duplicate Aliexpress-package-tracker resource: %s",
+                duplicate_item.get("url"),
+            )
+            await resources.async_delete_item(duplicate_item["id"])
+            changed = True
+
+        if not changed:
+            _LOGGER.info(
+                "✅ Aliexpress-package-tracker resource already at version %s",
+                version,
+            )
+        return changed
 
     except Exception as err:
         _LOGGER.error("❌ Failed to register lovelace resource: %s", err)
         return False
 
 
-async def _async_install_card(hass: HomeAssistant) -> None:
-    """Install the card automatically."""
+def _install_card_files(integration_path: Path, card_dir: Path) -> str:
+    """Read the manifest and copy card files outside the event loop."""
+    version = "1.0.0"
     try:
-        # Get the integration path
-        integration_path = Path(__file__).parent
+        with (integration_path / "manifest.json").open() as manifest_file:
+            version = json.load(manifest_file).get("version", version)
+    except (OSError, ValueError, TypeError) as err:
+        _LOGGER.warning("Could not read version from manifest: %s", err)
 
-        # Get version from manifest
-        manifest_path = integration_path / "manifest.json"
-        version = "1.0.0"
-        try:
-            with open(manifest_path) as f:
-                manifest = json.load(f)
-                version = manifest.get("version", "1.0.0")
-        except Exception as err:
-            _LOGGER.warning("Could not read version from manifest: %s", err)
-
-        # Source files
-        card_js_source = integration_path / "dist"
-
-        # Destination directory
-        www_dir = Path(hass.config.path("www"))
-        card_dir = www_dir / "lovelace-aliexpress-package-card"
-
-        # Create directory if it doesn't exist
-        card_dir.mkdir(parents=True, exist_ok=True)
-
-        # Copy files if they exist
-        if card_js_source.exists():
-            shutil.copytree(card_js_source, card_dir, dirs_exist_ok=True)
-            _LOGGER.info(
-                "Aliexpress-package-trackerCard installed to www/lovelace-aliexpress-package-card/"
-            )
-        else:
-            _LOGGER.warning(
-                "Aliexpress-package-tracker Card source file not found at %s. "
-                "You may need to build the card first.",
-                card_js_source,
-            )
-
+    card_js_source = integration_path / "dist"
+    card_dir.mkdir(parents=True, exist_ok=True)
+    if card_js_source.exists():
+        shutil.copytree(card_js_source, card_dir, dirs_exist_ok=True)
         _LOGGER.info(
-            "✅ Aliexpress-package-tracker Card v%s files installed successfully to www/lovelace-aliexpress-package-card/",
-            version,
+            "Aliexpress-package-tracker Card installed to "
+            "www/lovelace-aliexpress-package-card/"
         )
+    else:
+        _LOGGER.warning(
+            "Aliexpress-package-tracker Card source file not found at %s. "
+            "You may need to build the card first.",
+            card_js_source,
+        )
+    return version
 
-    except Exception as err:
+
+async def _async_install_card(hass: HomeAssistant) -> str:
+    """Install the card without blocking Home Assistant's event loop."""
+    integration_path = Path(__file__).parent
+    card_dir = (
+        Path(hass.config.path("www")) / "lovelace-aliexpress-package-card"
+    )
+    try:
+        version = await hass.async_add_executor_job(
+            _install_card_files, integration_path, card_dir
+        )
+    except OSError as err:
         _LOGGER.error("Failed to install Aliexpress-package-tracker Card: %s", err)
+        return "1.0.0"
+
+    _LOGGER.info(
+        "✅ Aliexpress-package-tracker Card v%s files installed successfully to "
+        "www/lovelace-aliexpress-package-card/",
+        version,
+    )
+    return version
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Set up the Aliexpress-package-tracker component."""
     hass.data.setdefault(DOMAIN, {})
 
-    # Install card files automatically
-    await _async_install_card(hass)
+    # Install card files automatically and reuse the manifest version.
+    version = await _async_install_card(hass)
 
     # Register static path for the card
     await hass.http.async_register_static_paths(
@@ -171,17 +185,6 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
             )
         ]
     )
-
-    # Get version from manifest
-    integration_path = Path(__file__).parent
-    manifest_path = integration_path / "manifest.json"
-    version = "1.0.0"
-    try:
-        with open(manifest_path) as f:
-            manifest = json.load(f)
-            version = manifest.get("version", "1.0.0")
-    except Exception as err:
-        _LOGGER.warning("Could not read version from manifest: %s", err)
 
     # Register lovelace resource
     _LOGGER.info(
