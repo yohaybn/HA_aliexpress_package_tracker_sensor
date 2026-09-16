@@ -38,13 +38,34 @@ PLATFORMS: list[str] = ["sensor"]
 _LOGGER = logging.getLogger(__name__)
 
 
-async def init_lovelace_resource(hass: HomeAssistant, url: str, version: str) -> bool:
-    """Add/update lovelace resource with proper version handling.
+def _migrate_stored_tracking_entry(
+    stored_data: dict, original_mail_no: str, actual_track_id: str
+) -> None:
+    """Move a stored entry and retain both tracking numbers."""
+    migrated_entry = stored_data[original_mail_no].copy()
+    migrated_numbers = migrated_entry.get(CONF_TRACKING_NUMBER, actual_track_id)
+    tracking_numbers = {
+        number.strip()
+        for number in f"{migrated_numbers},{original_mail_no}".split(",")
+        if number.strip()
+    }
+    migrated_entry[CONF_TRACKING_NUMBER] = ",".join(sorted(tracking_numbers))
+    stored_data[actual_track_id] = migrated_entry
 
-    Based on the approach used by ha-simple-timer integration.
-    """
+
+async def init_lovelace_resource(hass: HomeAssistant, url: str, version: str) -> bool:
+    """Add or update the Lovelace resource when storage mode is available."""
     try:
-        resources: ResourceStorageCollection = hass.data["lovelace"].resources
+        resources = hass.data["lovelace"].resources
+        if not isinstance(resources, ResourceStorageCollection):
+            _LOGGER.warning(
+                "Cannot register the Aliexpress Package Tracker Lovelace resource "
+                "automatically while Lovelace is in YAML mode. Add %s manually "
+                "to the Lovelace resources configuration.",
+                url,
+            )
+            return False
+
         await resources.async_get_info()
         url_with_version = f"{url}?v={version}"
         for item in resources.async_items():
@@ -235,7 +256,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
                         original_mail_no,
                         actual_track_id,
                     )
-                    stored_data[actual_track_id] = stored_data[original_mail_no]
+                    _migrate_stored_tracking_entry(
+                        stored_data, original_mail_no, actual_track_id
+                    )
                     # Mark original for removal after loop if migration successful
                 elif actual_track_id in stored_data:
                     # Combine titles/tracking numbers if both exist
