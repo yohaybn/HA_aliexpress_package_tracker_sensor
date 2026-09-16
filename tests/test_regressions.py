@@ -172,6 +172,81 @@ class LovelaceResourceTests(unittest.TestCase):
         )
 
 
+class DuplicateResourceTests(unittest.TestCase):
+    def test_storage_mode_updates_one_resource_and_removes_duplicates(self):
+        class StorageResources(ResourceStorageCollection):
+            def __init__(self):
+                self.async_get_info = AsyncMock()
+                self.async_update_item = AsyncMock()
+                self.async_delete_item = AsyncMock()
+                self.async_create_item = AsyncMock()
+
+            def async_items(self):
+                return [
+                    {"id": "primary", "url": "/local/card.js?v=2.9.4"},
+                    {"id": "duplicate", "url": "/local/card.js?v=2.9.3"},
+                    {"id": "other", "url": "/local/other.js?v=1"},
+                ]
+
+        resources = StorageResources()
+        hass = types.SimpleNamespace(
+            data={"lovelace": types.SimpleNamespace(resources=resources)}
+        )
+
+        result = asyncio.run(
+            INTEGRATION.init_lovelace_resource(hass, "/local/card.js", "2.9.6")
+        )
+
+        self.assertTrue(result)
+        resources.async_update_item.assert_awaited_once_with(
+            "primary", {"res_type": "module", "url": "/local/card.js?v=2.9.6"}
+        )
+        resources.async_delete_item.assert_awaited_once_with("duplicate")
+        resources.async_create_item.assert_not_awaited()
+
+
+class CardInstallationTests(unittest.TestCase):
+    def test_card_file_io_is_delegated_to_executor(self):
+        async def run_test():
+            hass = types.SimpleNamespace(
+                config=types.SimpleNamespace(path=lambda name: f"/config/{name}"),
+                async_add_executor_job=AsyncMock(return_value="2.9.6"),
+            )
+
+            result = await INTEGRATION._async_install_card(hass)
+
+            self.assertEqual(result, "2.9.6")
+            hass.async_add_executor_job.assert_awaited_once()
+            function, integration_path, card_dir = (
+                hass.async_add_executor_job.await_args.args
+            )
+            self.assertIs(function, INTEGRATION._install_card_files)
+            self.assertEqual(integration_path, PACKAGE)
+            self.assertEqual(
+                str(card_dir), "/config/www/lovelace-aliexpress-package-card"
+            )
+
+        asyncio.run(run_test())
+
+    def test_install_card_files_reads_version_and_copies_dist(self):
+        import json
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            integration = root / "integration"
+            dist = integration / "dist"
+            destination = root / "www" / "card"
+            dist.mkdir(parents=True)
+            (integration / "manifest.json").write_text(json.dumps({"version": "2.9.6"}))
+            (dist / "card.js").write_text("card")
+
+            version = INTEGRATION._install_card_files(integration, destination)
+
+            self.assertEqual(version, "2.9.6")
+            self.assertEqual((destination / "card.js").read_text(), "card")
+
+
 if __name__ == "__main__":
     unittest.main()
 
