@@ -129,6 +129,29 @@ class MigrationTests(unittest.TestCase):
         self.assertEqual(stored_data["NEW456"]["tracking_number"], "NEW456,OLD123")
 
 
+class AliasTests(unittest.TestCase):
+    def test_paired_ids_are_stable_across_refreshes(self):
+        stored_data = {"CNG1": {"title": "Package", "tracking_number": "CNG1"}}
+
+        for _ in range(4):
+            key = next(iter(stored_data))
+            other = "CNG2" if key == "CNG1" else "CNG1"
+            # The API is queried with ``key`` and reports the other number.
+            if not INTEGRATION._is_known_alias(stored_data, key, other):
+                INTEGRATION._migrate_stored_tracking_entry(stored_data, key, other)
+                del stored_data[key]
+
+        # Settles on one key after at most one swap and stops changing it.
+        self.assertEqual(list(stored_data), ["CNG2"])
+        self.assertEqual(stored_data["CNG2"]["tracking_number"], "CNG1")
+
+    def test_unrelated_id_is_not_an_alias(self):
+        stored_data = {"OLD123": {"tracking_number": "OLD123"}}
+
+        self.assertFalse(INTEGRATION._is_known_alias(stored_data, "OLD123", "NEW456"))
+        self.assertFalse(INTEGRATION._is_known_alias(stored_data, "MISSING", "NEW456"))
+
+
 class LovelaceResourceTests(unittest.TestCase):
     def test_yaml_mode_is_skipped_with_clear_warning(self):
         resources = types.SimpleNamespace(

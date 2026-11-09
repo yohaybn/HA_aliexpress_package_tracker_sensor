@@ -53,6 +53,12 @@ def _migrate_stored_tracking_entry(
     stored_data[actual_track_id] = migrated_entry
 
 
+def _is_known_alias(stored_data: dict, stored_id: str, other_id: str) -> bool:
+    """Return True if other_id is already recorded as a number of stored_id."""
+    numbers = stored_data.get(stored_id, {}).get(CONF_TRACKING_NUMBER, "")
+    return other_id in {number.strip() for number in numbers.split(",")}
+
+
 async def init_lovelace_resource(hass: HomeAssistant, url: str, version: str) -> bool:
     """Add or update the Lovelace resource when storage mode is available."""
     try:
@@ -246,6 +252,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
                     "Could not determine tracking ID for data: %s", item_data
                 )
                 continue
+
+            # A parcel known under two IDs (e.g. two CNG numbers) is reported
+            # under one while we query the other. Once both are recorded on the
+            # stored entry, keep the stored key instead of swapping it on every
+            # refresh (which removes and re-adds the sensor each time).
+            if (
+                original_mail_no != actual_track_id
+                and original_mail_no in stored_data
+                and _is_known_alias(stored_data, original_mail_no, actual_track_id)
+            ):
+                actual_track_id = original_mail_no
 
             # --- Merging logic during fetch ---
             if original_mail_no != actual_track_id and original_mail_no in stored_data:
